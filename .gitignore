@@ -4,3 +4,4 @@
 inst/doc
 private
 vignettes/rsconnect
+.DS_Store

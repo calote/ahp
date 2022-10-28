@@ -3,7 +3,6 @@
 \docType{package}
 \name{ahp}
 \alias{ahp}
-\alias{ahp-package}
 \title{ahp AHP (Analytic Hierarchy Process) Modeling for R}
 \description{
 AHP (Analytic Hierarchy Process) is a decision making framework developed by Thomas Saaty.

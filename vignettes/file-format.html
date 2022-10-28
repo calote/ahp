@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Christoph Glur" />
+
+<meta name="date" content="2022-10-28" />
+
+<title>AHP File Format</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">AHP File Format</h1>
+<h4 class="author">Christoph Glur</h4>
+<h4 class="date">2022-10-28</h4>
+
+
+<div id="TOC">
+<ul>
+<li><a href="#introduction" id="toc-introduction">Introduction</a></li>
+<li><a href="#basics" id="toc-basics">Basics</a>
+<ul>
+<li><a href="#yaml" id="toc-yaml">YAML</a></li>
+<li><a href="#ahp-file-format-elements" id="toc-ahp-file-format-elements">ahp File Format Elements</a></li>
+</ul></li>
+<li><a href="#version" id="toc-version">Version</a></li>
+<li><a href="#alternatives" id="toc-alternatives">Alternatives</a></li>
+<li><a href="#goal" id="toc-goal">Goal</a>
+<ul>
+<li><a href="#hierarchy" id="toc-hierarchy">Hierarchy</a>
+<ul>
+<li><a href="#alternatives-1" id="toc-alternatives-1">Alternatives</a></li>
+</ul></li>
+<li><a href="#decision-makers" id="toc-decision-makers">Decision
+Makers</a></li>
+<li><a href="#preferences" id="toc-preferences">Preferences</a>
+<ul>
+<li><a href="#decision-makers-1" id="toc-decision-makers-1">Decision
+Makers</a></li>
+<li><a href="#pairwise" id="toc-pairwise">pairwise</a></li>
+<li><a href="#pairwisefunction" id="toc-pairwisefunction">pairwiseFunction</a></li>
+<li><a href="#score" id="toc-score">score</a></li>
+<li><a href="#scorefunction" id="toc-scorefunction">scoreFunction</a></li>
+<li><a href="#priority" id="toc-priority">priority</a></li>
+<li><a href="#weightcontribution" id="toc-weightcontribution">weightContribution</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#load-process" id="toc-load-process">Load Process</a></li>
+<li><a href="#calculate-process" id="toc-calculate-process">Calculate
+Process</a></li>
+<li><a href="#vacation-example" id="toc-vacation-example">Vacation
+Example</a></li>
+</ul>
+</div>
+
+<p>ahp File version: 2.0</p>
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>This vignette describes the details of the ahp file format, as well
+as the basics of the <code>Calculate</code> process. Read this if you
+want to understand how to specify your AHP problem in an ahp file.</p>
+</div>
+<div id="basics" class="section level2">
+<h2>Basics</h2>
+<div id="yaml" class="section level3">
+<h3>YAML</h3>
+<p>The ahp files are in YAML format. You will find more information
+about YAML on <a href="https://en.wikipedia.org/wiki/YAML">Wikipedia</a>.</p>
+<p>The most important points/traps are:</p>
+<ol style="list-style-type: decimal">
+<li>YAML is based on <em>indentation</em></li>
+<li>Comment lines are beginning with #</li>
+<li>Multiple lines indicated by &gt;</li>
+<li>Anchors and references indicated by &amp; and *, respectively</li>
+</ol>
+</div>
+<div id="ahp-file-format-elements" class="section level3">
+<h3>ahp File Format Elements</h3>
+<p>In a nutshell, an ahp file consists of the following stylized
+elements:</p>
+<pre><code>Version
+Alternatives
+  alternative 1
+    property 1 (optional)
+    property 2 (o)
+    ...
+  alternative 2
+    property 1 (o)
+    property 2 (o)
+  ...
+Goal
+  decision-makers (o)
+  preferences
+    decision maker 1 (o)
+      scoreFunction or
+      score or
+      pairwiseFunction or
+      pairwise or
+      priority
+    decision maker 2
+      ...
+  children
+    criteria 1
+      preferences
+      childrend
+        sub-criteria 1.1
+        sub-criteria 1.2
+          children: *alternatives
+      ...
+    criteria 2
+      ...
+</code></pre>
+</div>
+</div>
+<div id="version" class="section level2">
+<h2>Version</h2>
+<p>Each ahp file must have a version, so that the parser can ensure
+backward compatibility. The version is of the format major.minor,
+e.g. 2.1 Major versions indicate non-backward compatibile changes,
+whereas a minor upgrade is backward compatible. For example, every 2.1
+file is also conforming to the 2.2 specification.</p>
+<p>The version number is not in line with the ahp package number.</p>
+<p>Early ahp files did not require a version, but now the parser expects
+a version to be present. So, to be able to process a file that was
+compatible with version 0.1.1 of the ahp package, you first need to add
+the following line at the top of the file:</p>
+<pre><code>Version: 1.0</code></pre>
+</div>
+<div id="alternatives" class="section level2">
+<h2>Alternatives</h2>
+<p>Thanks to the YAML anchoring feature, alternatives can be defined
+once, in a separate section. Later, you will see how to reference this
+anchor.</p>
+<p>You can also add any custom property to each alternative. Later, you
+will see how you can refer to this data in the
+<code>scoreFunction</code> and <code>pairwiseFunction</code>
+attributes.</p>
+<p>A typical alternatives section might look like this:</p>
+<pre><code>Alternatives: &amp;alternatives
+  Beach:
+    cost: 10000
+  Mountains:
+    cost: 5000</code></pre>
+</div>
+<div id="goal" class="section level2">
+<h2>Goal</h2>
+<p>The goal section describes your tree of AHP criteria and
+alternatives. For example:</p>
+<pre><code>Goal:
+  name: Vacation</code></pre>
+<p>This is the only node that has a <code>name</code>, the criteria,
+subcriteria and alternatives are named implicitly.</p>
+<p>If you want, you can also add other properties, except the reserved
+names (such as <code>preferences</code>, <code>children</code>,
+<code>weightContribution</code>, and others). For example:</p>
+<pre><code>Goal:
+  name: Vacation
+  description: |
+    A family wants to go on vacation,
+    but cannot decide where about.</code></pre>
+<p>These attributes can make your model more expressive, and they are
+displayed as tool tip when using the <code>Visualize</code>
+function.</p>
+<div id="hierarchy" class="section level3">
+<h3>Hierarchy</h3>
+<p>The <code>Goal</code> constitutes the root of a criteria tree.
+Typically, you nest multiple levels of criteria into a hierarchy. For
+this, you use the <code>children</code> element, like so:</p>
+<pre><code>Goal:
+  name: Vacation
+  children:
+    Costs:
+    Fun:
+    Spa:</code></pre>
+<p>Note that you can have more than 2 levels, and branches do not need
+to have the same depth. For example:</p>
+<pre><code>Goal:
+  name: Projects
+  children:
+    Costs:
+      children:
+        Development:
+        Maintenance:
+    Risk:
+    Opportunities:</code></pre>
+<p>Again, you can add other attributes which will be shown as tool tips
+in the <code>Visualize</code> function.</p>
+<div id="alternatives-1" class="section level4">
+<h4>Alternatives</h4>
+<p>On the leaf criteria, you add the alternatives, using the YAML
+reference feature:</p>
+<pre><code>Goal:
+  name: Vacation
+  children:
+    Costs:
+      children: *alternatives
+    Fun:
+      children: *alternatives
+    Spa:
+      children: *alternatives</code></pre>
+</div>
+</div>
+<div id="decision-makers" class="section level3">
+<h3>Decision Makers</h3>
+<p>If you have multiple decision makers in your AHP model, and if
+decision makers have unequal voting rights, your goal needs a
+<code>decision-maker</code> section. Otherwise, leave this out.</p>
+<p>The <code>decision-maker</code> section defines the weight of the
+voting right of each decision maker. For example:</p>
+<pre><code>Goal:
+  name: Vacation
+  decision-makers:
+    - Dad: 0.4
+    - Mom: 2/5
+    - Kid: 0.2</code></pre>
+<p>Note that you can use R expressions that evaluate to a numeric, as in
+Mom’s case above. The weights of the decision-makers must sum to 1.</p>
+<p>If you have multiple decision-makers, but no
+<code>decision-makers</code> section, then equal voting power is
+assumed.</p>
+<p>You can have <code>decision-makers</code> weights on any criteria
+node as well (and not only on the goal). <code>Calculate</code> will
+inherit the weights from its parent, grand-parent, etc.</p>
+</div>
+<div id="preferences" class="section level3">
+<h3>Preferences</h3>
+<p>Each node must have a <code>preferences</code> section, e.g. like
+this:</p>
+<pre><code>Goal:
+  name: Vacation
+  preferences:
+  children:
+    Costs:
+      preferences:
+        ...
+      children: *alternatives
+    Fun:
+      preferences:
+        ...
+      children: *alternatives
+    Spa:
+      preferences:
+        ...
+      children: *alternatives</code></pre>
+<p>Within each <code>preferences</code> section, you put the preferences
+in form of a scoreFunction, a score, a pairwiseFunction, or a priority.
+For example:</p>
+<pre><code>Goal:
+  name: Vacation
+  preferences:
+  children:
+    Costs:
+      preferences:
+        pairwise:
+          ...
+      children: *alternatives
+    Fun:
+      preferences:
+        score:
+          ...
+      children: *alternatives
+    Spa:
+      preferences:
+        priority:
+          ...
+      children: *alternatives</code></pre>
+<p>And then, inside that element, you put the actual preferences, as
+described below.</p>
+<div id="decision-makers-1" class="section level4">
+<h4>Decision Makers</h4>
+<p>In case you have multiple decision makers, you need an additional
+layer. For example:</p>
+<pre><code>preferences:
+  Dad:
+    pairwise:
+      ...
+  Mom:
+    score:
+      ...
+  Kid:
+    scoreFun:
+      ...</code></pre>
+<p>Note that, in case you have specified <code>decision-makers</code>
+section(s), the names must match.</p>
+</div>
+<div id="pairwise" class="section level4">
+<h4>pairwise</h4>
+<p>If you are an AHP purist, this is the only preference type you’ll
+ever need. It lets you define the pairwise preferences amongst all the
+sub-criteria or alternatives below a specific node. Each pairwise
+preference is of the form:</p>
+<pre><code>- [option1, option2, pairwise preference]</code></pre>
+<p>For example:</p>
+<pre><code>Goal:
+  name: Vacation
+  preferences:
+    pairwise:
+    - [Costs, Fun, 4]
+    - [Costs, Spa, 9]
+    - [Spa, Fun, 1/4]
+  children:
+    Costs:
+    Fun:
+    Spa:</code></pre>
+<p>Note, again, that you can enter numbers (4, 9), or expressions that
+evaluate to a number in R (e.g. 1/4).</p>
+<p>The values are typically from 1/9 to 9, where 1/9 means option2 is
+highly preferrable over option1, while 9 means option1 is highly
+preferrable over option2. However, you may customize this behaviour
+using the <code>pairwiseFun</code> parameter of the
+<code>Calculate</code> method.</p>
+<p>The standard function used to convert <code>pairwise</code> to
+<code>priority</code> is the Eigenvalue method. See
+<code>?PrioritiesFromPairwiseMatrixEigenvalues</code> for more details.
+Two other options contained in the package are the mean normalization,
+<code>PrioritiesFromPairwiseMatrixMeanNormalization</code>, and the
+geometric mean <code>PrioritiesFromPairwiseMatrixGeometricMean</code>.
+If you want to customize this behaviour, you need to write your own
+function. The requirement for such a function is that it needs to take a
+pairwise preference matrix as its first argument.</p>
+</div>
+<div id="pairwisefunction" class="section level4">
+<h4>pairwiseFunction</h4>
+<p>Instead of spelling out all pairwise preferences explicitly, you may
+prefer to define an R function that calculates the pairwise preferences
+for you, based on the alternatives attributes. For example, if your
+alternatives are:</p>
+<pre><code>Alternatives: &amp;alternatives
+  Beach:
+    cost: 10000
+  Mountains:
+    cost: 5000</code></pre>
+<p>Then, you could define a <code>pairwiseFunction</code> as
+follows:</p>
+<pre><code>Costs:
+  preferences:
+    pairwiseFunction: 
+      function(a1, a2) min(9, max(1/9, a2$cost/a1$cost))</code></pre>
+<p>The <code>Calculate</code> process will then go over all
+alternatives, and call the function for each pairwise combination. The
+result of the function is then directly written into the
+<code>pairwise</code> element.</p>
+<p>A function can also span multiple lines, by using the &gt;
+character:</p>
+<pre><code>Costs:
+  preferences:
+    pairwiseFunction: &gt;
+      function(a1, a2) {
+        min(9, max(1/9, a2$cost/a1$cost))
+      }</code></pre>
+<p>Additionally, the function does not have to be anonymous. If it is
+named, you can reference it recursively, e.g.</p>
+<pre><code>Costs:
+  preferences:
+    pairwiseFunction: &gt;
+      CostFunction &lt;- function(a1, a2) {
+        if (a1$cost &lt; a2$cost) return (CostFunction(a2, a1))
+        min(9, a1$cost/a2$cost)
+      }</code></pre>
+</div>
+<div id="score" class="section level4">
+<h4>score</h4>
+<p>Purists will not approve of this, but in practice, this can be very
+handy: Defining pairwise preferences, especially for many alternatives,
+becomes cumbersome quickly. Instead, you can define a score. Then,
+instead of using the Eigenvalues to derive priorities from the pairwise
+preference matrix, <code>Calculate</code> will directly use the
+scores.</p>
+<p>With the default behaviour, a score that’s n times higher will lead
+to a n times higher priority. However, you can change that behaviour by
+setting the <code>scoresFun</code> argument of the
+<code>Calculate</code> function.</p>
+<p>For example, if you have three alternatives, and scores are 2, 5, and
+10, then you will get priorities of 0.125, 0.1875 and 0.6875,
+respectively.</p>
+<p>Another advantage of scores is that you can assign a score of 0,
+leading to a priority of 0.</p>
+<p>You can define scores like this:</p>
+<pre><code>Fun:
+  preferences:
+    score:
+      - Beach: 5
+      - Mountains: 0</code></pre>
+</div>
+<div id="scorefunction" class="section level4">
+<h4>scoreFunction</h4>
+<p>Similarly to the <code>pairwiseFunction</code>, you can derive the
+score via a function, defined directly in the ahp file. The difference
+is that, here, your function must have a single argument. For
+example:</p>
+<pre><code>Costs:
+  preferences:
+    scoreFunction:
+      function(alternative) alternative$cost</code></pre>
+</div>
+<div id="priority" class="section level4">
+<h4>priority</h4>
+<p>The priority is the scaled / normalized weight you attribute to each
+sub-criteria or alternative. Typically, the priority is calculated
+directly by the <code>Calcualte</code> function. However, at some times
+it is convenient to define the priorities directly, in the file.</p>
+<p>The priority is defined similarly to the score, but it must sum up to
+1.</p>
+<p>For example:</p>
+<pre><code>Costs:
+  preferences:
+    priority:
+      - Beach: 1/2
+      - Mountains: 1/2</code></pre>
+</div>
+<div id="weightcontribution" class="section level4">
+<h4>weightContribution</h4>
+<p>The <code>weightContribution</code> is the final result of the
+<code>Calculate</code> method. It is the contribution of a criteria to
+an alternative’s overall priority.</p>
+</div>
+</div>
+</div>
+<div id="load-process" class="section level2">
+<h2>Load Process</h2>
+<p>The Load process does not perform any calculations, but performs the
+following steps:</p>
+<ol style="list-style-type: decimal">
+<li>read the file and transform it into a data.tree structure</li>
+<li>add a dummy decision maker if the file is not in the multi
+decision-maker format</li>
+<li>parse the <code>scoreFunction</code> and
+<code>pairwiseFunction</code></li>
+<li>convert the remaining preference elements from YAML lists into a
+standard format, namely
+<ol style="list-style-type: lower-alpha">
+<li><code>score</code> and <code>priority</code> into a numeric
+vector</li>
+<li><code>pairwise</code> into a data.frame</li>
+</ol></li>
+</ol>
+</div>
+<div id="calculate-process" class="section level2">
+<h2>Calculate Process</h2>
+<p>The <code>Calculate</code> process/function traverses the data.tree
+structure and converts lower-level preferences into higher level
+preferences. Some of the transformations are customizable. In more
+detail:</p>
+<div class="figure">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABAoAAAChCAYAAABOMF0SAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAASdEVYdFNvZnR3YXJlAEdyZWVuc2hvdF5VCAUAAE9dSURBVHhe7b1daFvblu/p8318dlzZGGIdV5KSSSEcHwf7gMutNA7xdkgQxGAdk4BUAbcUbmE9uJt1uARMHsw5Hdqt7k4aGTqFH3JB+/pFjZvb2nkyufdBpvtB9JPe4tsvMVTf4IfitKseCl/6Fnf0HHPO9am1pKVPy/b/B4PES+tjrqW1hsb4rznHHCIAAAAAAAAAAAAADYQCAAAAAAAAAAAAWEAoAAAAAAAAAAAAgAWEAgAAAAAAAAAAAFhAKAAAAAAAAAAAAIAFhAIAAAAAAAAAAABYQCgAAAAAAAAAAACABYQCAAAAAAAAAAAAWEAoAAAAAAAAAAAAgAWEAgAAAAAAAAAAAFhAKAAAAAAAAAAAAIAFhAIAAAAAAAAAAABYQCgAAAAAAAAAAACABYQCAAAAAAAAAAAAWEAoAAAAAAAAAAAAgAWEAgAAAAAAAAAAAFhAKAAAAAAAAAAAAIAFhAIAAAAAAAAAAABYQCgAoMeU/s9/orflf4RdcgMA2Pzd3/+z73MCg7VrfE8BAADoHxAKAOgx/+P//g/0N3/7J9glNwCAzdH/8//5PicwWLvG9xQAAID+AaEAgB4DoeBqGADABkIBrNsGoQAAAPoLhAIAegyEgqthAAAbCAWwbhuEAgAA6C8QCgDoMRAKroYBAGwgFMC6bRAKAACgv0AoAKDHQCi4GgYAsIFQAOu2QSgAAID+AqEAgB4DoeBqGADABkIBrNsGoQAAAPoLhAIAegyEgqthAAAbCAWwbhuEAgAA6C8QCgDoMa0KBamNHN2KjNHQ0BANzXyglM86vbYXxjbNr3+2l73aku2Zf+Ver+v25gPdGc3R8o7PZ0H2dp/uht2mh+cBALC5zELBi5dPlX8OtKe0lPffFta+QSgAAID+AqEAgB7TmlDwiWZEoDk8tUWPjY+0/PozZX3X66V9onnRhujLfgsFn+nx3Jj7uCEttfaIhpc+Nr9WEAoA6AuXXyi4R3eebNP9Z372nlbe+m8La98gFAAAQH+BUABAj2lJKMh/oKg3Se+7+QgFfbCsYdDwzS1aaaU3gWk7H2l65B7df+3zWZ8MAGBz+YUC9Brot0EoAACA/gKhAIAeE1Yo8OvOOv/qMy3NiP8nP3nW9y63/157tU2xidty++HII5p+Wa1707726h3dnYrRMB9nJEa3HrxTb8C0UGG3QQfDfm/i31bpcTJNN0bVutcm0jS/7j6WOieR/L/9RPfjc3SN98nHW/pAz12CQI0eTg3R6LNDxzK2L7SSzlJUn8/Q0Bhdj6Xp/qsvnvX+RCvJMRqK79GaZ7nLPOcRvn3NDQBg07JQIJ/BBbo+4njOjXqxMtB3Wet8pmXhM8zhW+wD76aFX3Tsw3zuE8JX3mL/NTpHM8ZXe/tnYfxaGKEgSHT1LJd+Sexvq0pLS4/0NbhNN+LbTXsmuHzYnLoupt93+8Kv9Hx9i2Ixfe3kuT31/D6Y7fpEj+O8nvgeZt7Tc/lZCF/sOQ/Tn955pq7/2ut31m/TtamcWM+85uEMQgEAAPQXCAUA9JiwQkE2f0jL6waNiyBq/MkeLRsf6fnbFoWCiTkR4D6l+Zf7tLzxgeZnOCgbcwTBf6LUy1UZKF6b2aKljY+UeLlFUQ6KJ7ZoVRxv1RDBnNWGQ3rBCbNXKNgRAeUEB4GPaIaPZezRggjyeb83RJvMwFMFsaJNIjiMJj9QwtinpeRTGUAOP3EMFXjzXpy3t0fAV1peEsH+yALF0up6JF6yCCKOK/ZZ13tAtHF46BE9fONZ7jRfoSBE+0IYAMCmJaGA/clN8cyJ5PHh+kftT+bEs9mC75LCXo2W5lggmNM+w/E8z9n1XtRzP0bDo49oXhwv8fKDSsh3Dul+TGxv+lDH9vV+rdtCwT3ph8bj7+Sws8fpNI2zYDD1vmGdGtuHjdH40nvlw5480r740GozD89i8UH5OXGN19/T9BRfqzG6u2Em+6pdwyNjdOMB72uPHm5UxfKQvrjuPOy2RB9k5W/Tff5+11kw4N8Po6V6NBAKAACgv0AoAKDHdDb0oEWhgINXV6IsAj8ONs31dj7SjPi7bjy/SNRvWW/VfIJbT4K9+uyez7H+RM/THIzayboKYnlfNdd68u0/vwXTf6fWFsTfhvW3tLf7NM0JvDfI5rZ628fGRQ3F8jvOIoxe8xUKmrcvjAEAbFoSCuRz6fUnVVqI3aYbz8L7rrX1tNjPPZp55X5TvbaRE8mqLTqYz/3dDfd6MpkeyVHC8xY/a/D2Xr/WbaFgiEaf2GIEW5jjmOfiFDLYlDBgtvlQXMtY3TrmNbV/R1S7hmLvdC8CbWF9se951OhhrP63ia8pixTzLQwXg1AAAAD9BUIBAD2mr0JB3SwJ9vIX/PdrfusugjOzZ4CvNRMKDun+TbFPv+KBb/dUb4Q1lXhbga4rAfAGwPy2ytHGpqbaZx7DNt2uumvlMF+hoFn7whkAwKYloUAnnPwWe+WNO3m3rKnv+kKJB+L5j/m9gXf7LP/nu6Z95bZ64+403dPL9Ilqe7Gurzn325pQMOM9N4+/8rNAX6V/SxoKp+bvg+XLtVDQyIe6zOOLfc8j4LfpjWpf498it0EoAACA/gKhAIAe02+hwJ1su5e/WF/1Dypd5hPcugJWT3DoMnegGRTEupfrNj7YD6gv8JXW3hyKgH2PHj7LWWNcA69JI8EhSCho2L5wBgCwaUkoEM/4alp18ZfP9ugcRR+8o8evbR/U3Hfp599PwPT6Qd/nW/uuBjacVDVU1PZBsx44Zzzw8aV+y4MEgdBCgV/vJ7cvViZ8ab5KKzwkIG3YtR4sn+m3jdOa+GLf9gb4Zf1b1+jcvAahAAAA+guEAgB6zEAJBaESYJ/gth9CQd05upOH4cgCjc9kaWZtS/ZaCLwmddfAYRAKAOgLrQkF2nY+0yqPnbeKGtpd6ps/k/r571QoqPMr9RbeP/j4Ur/lPRQKTHEjtZFTNQ/EMhZixmNpmk5v0zQPC7B8ZtA1COmLIRQAAMClAkIBAD2mK0JB3dv2Q3ftgcAk2bM8sPuu2N9ojKJrXLjKJ7h1BYDNhx6YY/6DAmr38oBzfL1No7yv9KF7OU+FKJZDKABgcGlLKHDZF1p+wrVQsqpmQFPf9W+bDz14onyG//Otx9L7bu+28P5B+dK62Vzye3RH+sluCQX6Gjk/078lslCh9sujS/uqOK21nj7nZkJBWF8MoQAAAC4VEAoA6DGdCQV63O3NbVp1rJd9ZcjArWWhIKAgmNqfGYQ3EwqaFTOco4Ut9Xe4RNyuUeAM0K11PMdQhcmc525aBzUKGrYvnAEAbFoRClIveTrCND32JLvP01zkVCfBIXxXs2KGZnX/oOdbFQCs314eYyTmKYYYxj9on+SZtjUlt++mUMD7cvfwWn3Gs0boa6r3U1cDYeudrA3RTCiwzreZL/ZtL4QCAAC4qEAoCMlJKSl/AIMtSaUTvXLfOaWjkkG7Nf0nnVApKdqULIn/gfOmM6GAg7GsDMZuOKfNGl2lOxx8tSoUCDOnGDP3l1hTXVKH5/b0Ojq4ndoSn3djesTmibgKnHPuqbJeb9MNsb/hWI4ebnBRMXGMB4/o2shtYc5z16ZnPbCn+vIxz3mEbV8YAwDYtNSjgN+wsw/iefnNaQmfpeXz75rir6nvamV6RJ/n2/RrPI3gM729aIc6RojtfUwl7GN064lj+tUJ4b9j3RUK7KkP9+nhEvviMbpjigfsG9lnmtMTynas0nX2pTy9ZBOhILQvhlAAAACXCggFIVFCwSylNgtUKPhZkaqneuV+c1KipPjBzVf13xAKBopOhQJ+4/78ZY5uRdSc19encrS09ZVW5HfculDAtvbqnV3IalQE1c8+ud94bYjjcQDJb+p4+iq/APBtlR4n+U0grzckgl8R5G/UXG/7Qifib97T+NA9ez5ubWuveK5uXTCLC5wtvaeV/GfVy8Izv7iabqtJ8A6hAIC+0JJQwPZmn+YdtQmGI49o+mXV3dVdWDPfxT5vOZ3V/lLvZ83dZb7h873j9ms8Hj/27KPLf7bmH77QCosecn+36UZ8m1beqhkWuicUiLa82qdpfV2kLzacvyHCP259sD4fGonRuGhH4s0X1TtsxNAibYBQICyUL4ZQAAAAlwoIBSFRQsF59hpoQJ1QAAaJloSCK2sqmKwbyxvavtLyE5EYeLr49tMuC5VKhX7729/Szs4OHR8f66UAtEbLQgGsLWtH1LyoBqEAAAD6y/kKBWdHVDKSFI8OSRU6Gk+SUToi74v50+ou5RKTFGElOzJJidyu5+39CVV2c5SYjMj9RCYTlNutuvajEv08HVQLlODjReO0WTkzP6VKIeNoR4by5SMyP2XCCwVVyot9JOtW9Cyv5tX+jvgaJGgywseOUjxT8OmZcErVoPOT+1HtVpYXR/LvUXB6VKZ8Ji5VfHWsPJWPnGdptvFIDmUwj8fXo3Bu3SUuPhAKwlnWMGjYerPVosliXfU9EvpplwUWCvi5//nPfy7//c1vfiNFg9PTHvmA0yoVMovaB0ZoclH4m4rXfzbwgSanR1TON/Lj2i/mD6haSKieO/FNsn8GKqIdjfwjaAUIBf0xCAUAAAB6xTkKBTpo4yS0dCCC0wMqbSakGJAo2m+xjkspuSyazFPpoEIHpTwlORCM56kmY7hjKqU4eIxTZres9pNPymAvkiqJTxUq0Y9QJJoQwSPvp6QS8rMaFRbF9tEk5c126O3j+aoVZPZGKJileDxKi5ldKovgvLyboUUOlhNFq932+UUpmS/Rgat9NToTwXGlvEmL4u/MbkW0n4WWeqHgTBwvLtaJJDbldayUdynD5y2uW75qnqVq42xcBMsiWN8V18leL0GOrwW0AISCsPaZHs+NeYZdhDMuQjZcNzNEf+2yYAoFTjNFg+XlZfr++++7JxqcCZ8zy37JoCL7m0qZdkWyzr7aFnKb+EBehfcTF22NJGhT+nHez6L87bD9uPaLkQhFE3nhc8V+SkpsOKsVpO81f2cqByXKJ6PimE7/CFoBQkF/DEIBAACAXnF+QoHuLr/p6i5/Rge5CE1mdIJ/VqFNEbxFjIrjrZDguEgJ3SPgtJwRP5KzYj/uYO70wBBBoh1sqkR/iHIH7vWOiwkROBp04Il7zyq8vZ0c90YoEEm5uADOFnmPc1bZlOdhWEGzgtttvQ1rWqOgRgURjPPf7lz/iHYTYrklTKg2Ds1ukuty6v3XnxMIA4SCFuzNB7oz6ilq2My4UNeoz/RgfbbLgp9Q4LSf/exn8l8WDX744Qe9VZuYPatcjkn4pcUoxQvKoYXxgbXCrM9+xJ52hX+3/Lj2i0M5cv8MHFNR+MGIceDuoSA8c8WIeIRbEBYIBf0xCAUAAAB6xfkJBaYIkMjTwdGpWwgwqeVlgBg89v6UDnIi8Fv0C+R0cqxFBv9E/1gn1AU6EMExB8iW6bf0ZnJsCg3+5txva0KBWygR6OXmOdfyIlCN8HCCBjQTCmoFmhWfewNtRgktizqQ1kJBfaPU8uAvwpc//vGPMGEQCq6Gsd/w+/4vmmWzWe3Xwtk333wjt2lLNGDRV+wjnitS9dj3VyCED3T7ehenZcqI/S9KB1ff00pyrIXQAvdEcP8OlDcXxTl6fzfCUSwWfa/vVbF/vf/vfJ8TGKxdg1AAAAD95VxrFBwfGKqrPQeckUlazOSpVDm23uqclFNNgjQd+PkFiJ6g0F8o0AlwA4vk1ZyDavugWQ+cMx60JhTU5d6u5SdUTol2eANbL82EArlPUwzw4DpekCDQnlCwuLgIEwah4GoYJ4Z+3/9Fs9lZfjuv/F8rlkwmqVwu66c/LGdU21XDCOR+onFK5napXDM9XhgfqPyTEgO8OH1XgFCgfWCwRUj/DLSEYYjfN5/re1Xsv/+f/5XvcwKDtWsQCgAAoL+cbzFDySkdVUpUyNlFDc3aAv7JvZMuCQUhEuDmbTFR++yWUOAb2HoZUKEAKCAUXA27LPCbdJUgB5tZs+Dp06dSIOm4ZsHZCdXKRTKsooZmbYEwPlD5p06FAri37oKhB7BuG4QCAADoLwMgFDg5o+OienNf4Dc4gUMPapSPTlKy+H81H3qgu9H7J/rHVFwM2t5Nq0LBrDwBBydlSonlrQkFDbrdimsTnUxS8Uj8v+OhB+K85AWAUNALIBRcDbssBAkFpjgwNTUle1L1burEU6pscq+GnKwd09wHNh96kJQOLkAoOC7KYWb+QgNoFwgFsG4bhAIAAOgv5ycUVAu0OBlXgoCDs4OcCBC1UBBQzPCsuikSXyUgNCtmmNNVCoMSfVnM0Gd7eYzIpKcYYhihQAetmbKrMNax3L51ocC/kNcZVTmQNoPnZkKB2SbxtzsU1sUM47vifwyEgl5woYSCV1vy/pt/5fNZ16xGiaVHdH1E3FPiWNGX/46WZsT/Zz7QC/n5J5qXy1uf/eA87bLgFArMwoXj4+M9EQeOSzydYYbKng4JR7tcG0AJBWF8YONihnHalQ4uqHeCKmZYV8RVHyMy6ZhCEYRmUISC7Ot3FJu4Le/joRGDVnzWcdoL4z1Nxxcs/zQcWaBYco+et1UstXe+TBUx3Gp6PnX2tkpLS+9o1e+zkJYVvxM3pt5Tiv+WxWRbLEDbpkEoAACA/nKOxQxrajqraJKMIk9rWKFy0aAECwOpshXImdMjxvUUggdiHa5rYK/TyvSIPom+Oa0WT71V0NsX1DSFobb3oVZQ03slNh1TecVTlFpsXSjwO7+iwdN+RShV1vs6PaCc2GY2VxTH63x6RAgF3QVCgcdeGeIYY3RLBN/LxkdazdcgFAwQplDA4gCPs6/V2higHxbuacW+dtExTa7wv+yrrKkPw/jAVqZHrBMKbP/Iv0cFnqbxoEQFub04hld9AKEYDKFA+5aJLD3c+Cj8TbXBFKpi3TgLCmM0Ht+mJbn+Pi09S9M4iwYjq7T0xm+7RjZ4QkHbAoNpO4c0P3FP/EZ8tZbJ6WmXPlLWuV4PDEIBAAD0l/MdenBao6KjNgEXssoUKnVB3Gl1l3KJSRn0qXXU3Nc2J1TZzVFikoNJEXROJsgo1lzrNEz0z46onOc3W6odkcnFuna0IhSIFlOVg125vyjFMwWqnqoZFloXChixP8f5ReMiqLarJwq4IFhKj+1NUfnEPyA+PSpTPhPXhcNUuw5clcYhFPQCCAVuaz6dF4SC84R7DfRUHPByfCD8kl2bQPrvEgueTpr5QMGp24/LdQ6OtUjABAsFzJnLP0ZoksWLSiiHD3wYDKFA+ZKh5Cefz5z2lVae3BPf+5zwfV/qP3+7T9M3xX4mtlt8E3/5hAIWBWxRV9vOR5oeuUf3XzuW9cAgFAAAQH8ZsBoFAFw+Bkco+EIr6SxFzW64Q2N0PZam+87A2BQKjBolkqu6++1tuhHfphVH11sr2Hz7ie7PxWhYbDMceUTTLxu9sfus3u7JY5vGAate3qRHwdrWB5qeUscaGonRrQfvXG06bwMA2PReKPhMy8Kf3YqMSV/C/udu+pPtf7Qvc1pgwv7mPd0Sn48+O/T/XNjaelb6S7tXwVd6vr5FsZj2ScKuTTyVPtB+sx7gy169o7tBvky220dI9Sz3S/izW3s07xg2MTQ6R9GlD/RcDwtYYaFMt1WaU0DJf6T78Tm6Jj9jn79Fj7fsXgPSdj7SjNj33Y16MWUlKb6H+F4D/9+5QSgAAID+AqEAgB4zGELBV1peEoHcyALF0qrLf+LlNsUmOCics98E6eB6eOQ2jcff0WNeby2nut6aY1KFqSB1jm5MjNH40ntKcBfdJ49k4HsjeRjQBfUrvXj9kR4/WRDbLtDMutkVuLlQ8GI9LQJY7hKs2rS8/k4E6Hw+7XQH7o0BAGx6KxTUaGmOBYI57c+E/0k+lUnu8NwHPXa+KpYLP8GJr/AbapiTJ/HVllpTPulhC75EvlkXCXU0+UH4P/ZJ72l6its05kik631Z6uWq9JPXZrbk8IbEyy2Kjoo2TmzRKif07QoFWuww97ts7NHDJeWThx/sywR+bcv0v2la4DZvqXZmX29LH29tu/GB5mdYUOYeFvY1yxpcQypLCT+BVrRveOhRS9ewVYNQAAAA/QVCAQA9ZiCEAu46OyGCWu8bNR1cWstNocAz3lQFxSJI1UGgClJZFPjks17jYFFt6wyEmwgF+i3WrXRVr29ajR5OibY+6f3Y2DAGALDppVCwtp4WPuQezTiSWLl8IyeS1TGaMczlypc0G3qw8kSsM9S80KFth7QQi9X5P9NX2cfz92V14/nZD4/OqXa3KRSsphfo+oT421VU8CstP2Hxwl6vTmAw/eiSEhNc27K4bAnE/Lfy06Zg7DIuaijO9c665zemiwahAAAA+guEAgB6zGDXKFCB7PhaTf2thYIZb40CvdysXVCf7GvLf5BjvBsFiy0LBbL4YYym1/gtmdsWZCFSZ9B7fgYAsOmdUPCFEg/Ecx+zezjZdkj3uZaAlYiHEQrMIVHd8CN6X57jW77sNb91H2tcA6ZNoSDI1Hr2rAR1271RPjv6bL/Ov6reB+Yxa/Qw1uha6mvfRJTpxCAUAABAf4FQAECPGSyh4CutvTkUQeAePXyWs6cNM4M7jyBgma9Q4BekNg/MWxUK1Pri80BbpcfeoPocDABg0zuhwJuM+3zm8SXNklc1dr+VHgWmCX+ar9IKD31IG3bdgSBftr4qjuMjAjitQ6Eg+/YzPX/FQxre0cwDcxraBttp3x5sYzQvh6apcwmu4+C99t03CAUAANBfIBQA0GMGpUbBalqN4eXgj+cGH5/J0szalhrD22WhYDgZXBSsPaGgSXA9AAYAsLlIQoHyMU1qFLx5T9GJpzSzofxSakPXbuH9j87ReCxN0+ltmua37p34snaFgjf74tg8zIDbdJtuxBYotvSO7i85ewX4bBfk8+vMfS71BqEAAAAuGxAKAOgxAyEUvN6mUQ7y0ofucag8rRUHlm0JBT5FrfTQA7+q2KbVB8uNhQJVQGuIpq1xx4NpAACb3gkFIYYePDGFgXBCQZhZD1T9FT0F4Ns9KbCOLu3TC1dNAN09P8CXBQ89OKT50RhF16ra1+rjONbx9kZwJ/xf6DEPw7qZo4SnYKMq1NhIYHhP46KN1vCzQFPngh4FAABwdYBQAECPGQShwErOPW/MVPEvRyDdklDAAbA7uFx9NieWp+lxg2kLWxUKrAJh4nN3YlCT212bek/PXcvPxwAANr0TCpoXM/TOOtBUKDAL98kq//UiZ3brPd3hIoRze8pHaX9YV8tl650UHJr5Mm8xw+wrg0ZNAUGLurF1ZzuUrwtO+PV5WgKJaVVamGq0HZsqZjh006grhLjy5B4NRwxd30CLIHXHMA01CgAA4LIBoQCAHjMoPQpuiEByOJajh3rqrIUHj+jayG1hjuCuRaHAnh5snx4uLcgg/Y5HPPBay0KBMHNKMav9PBWZz/Rd52kAAJteCgUycW42PaK0sEKBsB2R6OrpDcfj244pBvWQLeeMAlzhn/3m6FO6L6d55eOv0nX2pzzVYQhfdsMz/awlQnDCzdPWjjyimZf71lSFN+ZWaTww4edeFtx24Y+fmdPfbtGdyJhoD/tJe7u1jaz4+x7dXRP7NqdHFP6dfx+s8xHHvB+v9+dydgjfnhzC9KwHjXqTdWoQCgAAoL9AKACgxwxKMcO1V9t28cLROYouvaeV/GfVjdecAqsloUAEn6/2aVoX8Lo2kab7hh0QB1k7QgHb2qt3drEwHoM7k6MlHegOggEAbHorFLB9puV0lm6JZJh903DkEU2veYZWtSIUSPtCz9e3KBabs+q5XJt4SnfTH7Vvsi279cHyfUMjMSkuJN58odVn98Tf5lv4EL5M+OLYs0/udr/9JBJ13Qbzczk7QZBQIGynSktLZvHCMboeE/54o0ZrsoeCY8rInUNamNPHtsQJPp89mjePaW7v8edqGJh/jzH1mdOvd98gFAAAQH+BUABAjxkUoaCbVp/swwAANr0XCmB9t51PNH/TOyyC7SstPxmjofieR6jprv0v/+p/o++//56Oj4/1XQYAAKCXQCgAoMdAKLgaBgCwgVBwOU0WdTR7oJkmizvWF2Dstv1X/+K/oevXr4vfniH69ttv6Xe/+x3t7OzQ4eGhvusAAAB0EwgFAPQYCAVXwwAANhAKLqntHNL8xD1XbRgWD4Yf7Pe0NwGbOfSAexQUi0XKZDI0OzsrhQO27777jv74xz/SDz/8QKenp3JdAAAA7QOhAIAeA6HgahgAwAZCweU1WfzQ7FXARQxHfabK7YGZQoEXFgXK5TL94Q9/oMXFRUs4+O1vf0vZbFYOV6jVanptAAAAYYFQAECPuYxCAazeAAA2EApg3bYgocCPSqVChUKBkslk3XAF7nWA4QoAANAcCAUA9BgIBVfDAAA2EApg3bZWhAIv5nAFwzDqhiv8/ve/78lwBQx/AABcdCAUANBjIBRcDQMA2EAogHXbOhEKvHASz70OvMMVJiYmujZcYWFhQe4LggEA4KICoQCAHgOh4GoYAMAGQgGs29ZNocAPFgbM4QrRaLTj4Qq8/Y9//GO6du2aFB4AAOCiAaEAgB4DoeBqGADABkIBrNvWa6HAS5jhCryOHyw6mOub9uDBg8D1AQBgEIFQAECPgVBwNQwAYAOhANZt67dQ4KXZcIWdnR1ruAL3TPjFL37hEgp++tOf0jfffCN7JwAAwEUAQgEAPebv/v6f6d//h/8Eu+QGALD5p//4n32fExisXeN7atAwhytkMhnXcIWpqSmXSOA0Fgx+85vfSNEBAAAGGQgFAAAAAAAAdAgPLSiXy1Is8BMJTPvZz34m/+UhDCh2CAAYVCAUAAAAAAAA0AVYLPAKA0H285//nH79619LcQEAAAYNCAUAAAAAAAB0AU76eXiBnzDQyHh2BRQ7BAAMEhAKAAAAAAAA6AI8S8KPfvQjSwD4yU9+IqdIdIoCbJFIhOLxuJyOkQskspnFEHvNSSkp2pCk0ole0BFVyvM55av6b8FJhQr5MnVl96A7VPPyvnN+TWEIfa+cHlHJ2CXfO1h8Vi7kKBlXdTyGhqIUT+Zot9LrO+SUjkoG7TZ9rE6olBTtSpb0PetzT3fISaVA+bJ9vt19BnsHhAIAAAAAAAC6AE+l6CcCcPFCtkGoSdBroaCadyZdYCDosVCg1suLu8HNqTjuYkTcD9EkGcWyeg7KRTKSSjSIiwad6XW7zkmJkqHOuddCgdpf0nERIRQAAAAAAAAArhSXVSi4ikNDOhIKjlWiHkmVqP7KndHRLm8TodxBj8Sz0EKBl94LBRcFCAUAAAAAAABcFOTbYZG8HXF37wRFOamJxilTqLiSczN5O6gWKBFV62xWznyTv9OjMuUzcbUv7hqeyVP5yPmuV791zR9QtaCOGY1vUuXMmVTpdeQ+lCX/9b+hzYhIFn2SrrOKUdeOQYZ7hoyMjFA2m6UffvhBL+0WNSrM1l+nWmFWXKMI5V3d59W6i0Uz/VZd7BOTEXnNI5MJyu1WxVIHfj0KTqu0m9P3T2SSUgWxjXlv6e/EuleOalR0rJswSmTeHlIY4uWmyYOcUWWT25OhcqAOIM5jMU5JcVz7Tjuhym6u4blYooRof8G8Zz1tMs/XNhYxgu7hoB4FB+q68rMjn4kCuUdLBAkAjuVarLDboa6t3zMoh2jkMxSXx+O2ZShfPnJdG9V+/p4KlNFDOfgaGSXnet0DQgEAAAAAAAAXBZkEzVI8HqFoskDlSoXKuyLB4KQhZdcGUMlIhCLRhEg4KnRQKonkqj5JORP7k9smNql0wF3DdymzyIlaXCSWZvqhk5SIOGYiL455QKUSJ3BOoeCMTmoV2s2Ivxc3ZbtqJ2eiuWJfEW+3dJFIGmK9TNmd0A4wLBT84he/sKa35BkreIrLbtWWkNdptuAY528LL7YoIKgVaFZ8/wW54gmVMyJhjCxSZld17ed7gbv7u97ke4UCFnjiYt/RJOVLB9Z3zkNm6oUCcQ9FopTMl+iA919IyiQ7slmRyenpkVi2uSjWy9AuDy04Et/oWYUMvi8MtU44jqmUUvedOhdxj+X1sRznotoUF2012+RYT7eJk+5KeZMWxbLMLg/7ORL3WdA9HCAUiPUi4voUxLMjrw9fr0iK7FIDIYSCsxOqVcS24u/FTT6nGolHol4oML+PSII2+fuolMVztEgRsZ09PEO3U3xHcfN7OyhRXg7jiEgRsNtAKAAAAAAAAOCioJM+b5dufkMfcSQMKhkZotyBO4FwJynq7TQnSc59ER3RbkIsTxT1cjNpzZF7dzqpsjJQbp7an5U+ycQ24n6brRPJTPDr5oGDhYLr16/La2oaT3HJ//75n/+5FA06GZ5Q18Pi9IByWhAayh1YgspxUSTlWlA4q2yK7zxBu0fqM4vjIiWcyaNHKJA9FUTSW3LdQDpZrRMKhijhFCpY5JG9BTYt8Uet5xCD9LCDpOsAjTktZ8Q+ZmnTEqcUpwf+97V331JocbahbuhB0D0cJBQY5Mq9+Z519Y5xCAIuvMvr13M/g/r74L89l+toNyGWJ0hdfrP93vXE/rkOhOsB6w4QCgAAAAAAALgoyKTPk3hLVMIQ0f3UvcmIiWu5TOKHyPB5G6kSt0V3kuIUACQqCWooFGgxwtmt/vQgJ/bdqFv64OEnFDjNFA1+85vf0M7OTuuigRQGWNjRF0V8zxGRjJfL4lpZPTLU92Bey+qmOPakQUV+k+8y9Rbb+l5cQoEWh3ze9h977hnrXvGcivfeUn87knR9vPokOohTOsiJNi2awpQTd3vDtkks8BcK6u5hf6FgVnXZcCGvt/gu1Cf1AoDCu7x+PXdbg78P8RCq3gjyIbTb6T71oPPqHAgFAAAAAAAAXBRkEuZIiCzcCUNd4qRxLZf7MsUAD67kMigZCSMUsB7Bb7DNRFInhY635GHgLv7ffffduRl3y28kFDjNKRp8//33IWe70NdYJ4yy5wBfI/l2Xn9HWkxQwo5e33HcOjOHori+yyptiv/7vu333Fuh7iHr7/q3+eF7FLjP3U0b97Va0JFQ4CdyqGPkSGk53RIK1Oeu4SUW6jP1fIVtf/eAUAAAAAAAAMBFoZlQoJPDUAlVn4QC1XNBj6v3vjkPCQsFi4uL52btCAVTU1NULBZDT4spxQEpqJxQOWUm2uqNc6p8oocnmIlqCwmi87vUwz56KhTwfcHd4X0TfxMewjBJi5kiHZkFBS+EUGAOSQhaz7u8fj13W9XnEAoAAAAAAAAA7SOTObOYnRORVIjkzOwyHSqhajr0QKwn85egZMSZyCh8hQI6puKiapsaduAZ/30BaDb0wCxyyOJAoVBor16B/D4WqVjjZN78jnXhx82KuLbOegV6eZhr6RJ9gru6e++ZUPeQ9bdTKDDrGDQYXqLH/KuCliGGHmyqvYdtk1jQm6EHVsHJgPVOypQSy8MLBc2HHihRB0IBAAAAAAAAIAid9M2KxMmZWJyUcxRxCAjhEiqdpIgkw52g6WKG8V3xP6ZToYDflidEkpWnvEhurer0Fwg/ocAUB8bHx8kwjI6KGSrE9RTJcyqTEd+lLQCclFPi2iUoIb4rZ8KpihmaiaQDOVwhSomirnLoEgpYj/ApZshiDn/njnsmbFKu/nYKBQJZUFF8156im4pTqmzyDAtxytfUSTYrZmj2QAnbJrGgI6FgaHaTXE0R1zTlEOKsZ8czc4eq89CKUKC/D/7bc6FUMcO4LlYJoQAAAAAAAAAQhE76uKDhYmZXTY+op6yzp1KrT0ZMvMtbmh6xLhmpFwpU0qOmZOTpES10Jf5IpDdTufUaFgp++ctf0k9/+lNxfuJ6ifNgcaBb0yMqzF4CwhxTXZo9P+wK+CbmlILiXjCKavrCokFJnos/LhJ38zJ7hAJ+m7/J61jT7BXJEN85n5Pz3gh7D6leIrOUK4p98fSImmOxnO8tPo5RVNM3HpQK+v6KUMqVGbcyPWLzNplDXGZzfF0c0yOGFApm43GKLmZoV04tmq+/poJagcWOCCU2HdM0xlOUWnQKA1pQkFMydmF6RAgFAAAAAAAAgDrMpO+gJpIJkcxwIjWZIKPEyZBN6IRKcHpUprze19BQlOKZAh0cO5P58EKByA7JSPDc7qJdegYGhX5jHdm8cMMOGBYKrl27RplMhsrlsl7afVTS7R2zrgoQ+nfNP6Xqbo4Sk5xki3WicUoaJXLk6/VCAXNapYL5nUcmKVWoUs1zb4S+h87EvZialImtS+BgTiq0m0vSotk+cazFjEiaXQ00OaGK41zkfV2stXlfn1FtN0WTPLxhKEXlk9aEgqR4nmq7GYqzQMC9M3JFqtU1WVz7gr0OPzfV02O5P2cPguMDgxJynQjxI+F7DqdHVM6b+xqiaDxDhYNjR88bCAUAAAAAAACAIPySvguBSmic0yReJDofVjD4qG7zmyJVBgBCAQAAAAAAAF2Bq+P/+te/pr/6q7+i3/3ud/THP/5R2uHhobSw1e8bclGFAjn0wK8II+gvXDgwSvGc580/d/3v0ZtpcDGBUAAAAAAAAEAX4DHrP/nJT2Qib9q3337r+pvNT0wIPdb9ggkFp9UiFQp63DyS0IGAhzdwgUCzxkXloET5JA8XcdalAFcdCAUAAAAAAAB0AR677hUFwlgymQzftf2iCQUHhhwHH03kqdKFDhWgO5xUuKigrisgx9cH1Q0AVxUIBQAAAAAAAHQBHlrgFQGC7Oc//zl98803PS2MBwAA7QKhAAAAAAAAgA7hHgE//PAD/dmf/ZmvMGCaOb0eD1PoSs0CAADoARAKAGiD/+Hf/CP9t//rP8BgLdt/t/8P9Hd//8/6TgLgYvF/f/1PMNjAW7/gmgI7OzuyzsDExIRM/q9fv05/+Zd/6RIGnMYiwdTUlJxPHgAABhkIBQC0wd/87Z/oX7z/k/wXBmvV/v1/6F8gC0A38bufYbBBs17Ab/551gIuOvjdd99ZiX80GpXz6hcKBasYYbFYpF/+8pcugYALHA4PD8u5+AEA4CIAoQCANlDByP/rCkxgsLAGoQBcVPzuZxhs0Kwb8DCC77//nn7/+9/Tb3/7Wyvh5+kPecgA1xUIGjbAgoFTJGBbWFi4EvPwAwAuDxAKAGgDFYxAKIC1ZxAKwEXF736GwQbN2iFoGAHPRsC9AFodKvCrX/2KfvzjH8tihdzDAAAALhoQCgBoAxWMQCiAtWcQCsBFxe9+hsEGzZrBPQG46GDQMAJO7M1hBO3CPQh4XyhWCAC4qEAoAKANVDACoQDWnkEoABcVv/sZBhs082IOI8hmsy0PI2gXCAQAgIsOhAIA2kAFIxAKYO0ZhAJwUfG7n2GwQTPnMIJvv/2242EEAABwFYFQAEAbqGAEQgGsPYNQAC4qfvczDDZoxr0EZmdnrWEEKCIIAACtA6EAgDZQwUgrQkGNEkuP6PqIHgf5suazTq/tCz1/maOF1+bfn2lpRrRn5gO9qFu3u5Z9tUU3pt5TyuezsCb3MbRFKz6fddteGNsUi8VoWHZPvU034tu0nHes83af7o7maHnHsawFg1AALip+93N/7BPN8/OY/OTzWWf24uVT8Zw/pSXnM94lW0kqnx9s/fFpV80AAAB0DoQCANpABSMtCAWvDBEQjtGt5B4tGx9pNf/Vf71eWv4DRUVgOv/KXNYnoWDnkOYn7onjtn/Oa6+36ZYUWXofVKdertKw+K7G4+/osfiultffUWxCHHtklZbeONZbe0TDSx8p69g2rEEoABcVv/u5P3aRhYJHdPfZNt33tf2OBFSYvwEAAOgcCAUAtIEKRsILBb0MRENbnVDQH+OEum0xYuczLT97Stf69fZt5yPNjAzR6JNPbgFALJ8Wy4efOIQBuewe3bd6aIQ3CAXgouJ3P8OCTQkF6DXQbwMAANA5EAoAaAMVjIQRCvRbeyvRNYNG9XYs+vKzZ33P8ldbYv2ntLRVpSVr6ILqCr/y1rkd2xdaSWfpVmRMHmc48ojupj/RmrUfbxv8exSsbe3RfHxOJ+d8rC16vOXsDWC2sSqHMpjHuzaRpvuvvjjWE6YT77sbnuVvP9HCg6d0Y1S3ZyRG4z7npILsMRpf2qcVKbZ0EnB/pefrW44hBdzmpzQtzsNK/l+/o3HRppk6MeUrJR6IbTzXaiUpzj2+p65xCwahAFxU/O5nf9P+JSl80KttuiP9xBhdn8oJf+bxB9p3RSduK3/A68W8/sTTo8D0ja/2KMb7Fj4kumzQqNjWLYYe0v2bYruRLVq1lgl7vS3WXaCHb3yE3B32t7Z/Mv1E3XOe/0j3G/rKFoQC83y8YrJnuWqr2J/wodaxxbnfWvpAzxsOhery9+F3/deq6rMQ/t11HnPaJ48+svxxat38bRHHnvP7vWtsAAAAOgdCAQBtoIKRMELBV3rx+iM9frIgAp4Fmln/SMsGB5ytCAX36IYI2Myu8I/TaRpnwcA15r9GS3McVN2maPIDJYx9WkqqN/E3koeUfVul5XWDxsXfsbTZhnqhQNUBGKLhKYOWNnS3+xjvd84xdEC1cXRCBKkieFzgc7LWeyQDb7We2J+RE8uylHAGeebbeXNbbuuztDzu0MS2K5hffbZK9w11LazA0vF5KyZ7NljXh9v8nqanVCBaJ2TUmU42Huy7kwVxvYY95xzGIBSAi4rf/exv2r8IP3FjZIGm1/ZpeeMDzchnTviT16Y/+UrLS2KZWCeWVkOzEi+31XAfsZ7dY8dPKBij4ZE5usv7Fs9zYkusI3zL6LNDvY0w3ZOK/a/zOV19do+Gbip/4xYKzHaLxPil2C/7pyePZCJ7a82uLZN9vS398LWZLeUrxbnNz3Bi7fSVvRIKxDUVvwleX+/q8VRnXf4+fK+/WB7Sv9efxx4txOfEsnt098Gq+G3J0UNxXRMvDTXsrMUaNwAAADoHQgEAbaCCkU6GHrQiFNR3hffuL2sYclz9tOF+m8XJ8bUJQxXda1qjQCfD4m93QFalhSlnoKYD9psGrTjfYOn92+fEAWf9/tY2cnRjtD4gVom8T6CsTZ1zu0LBIS3EYnRDJBmuQFr3eLCSjwAz6xbMeK6vLGoozvnOuvd7bGwQCsBFxe9+9jftXzyJM4uaD53+RDxD05wsen3hm/d0y+VP/ISCIRpP67fY0myfY4qfaxtZ4as4OXb2bBJtiNmCgsufaj/m7lXEPYrG6Hrc9GXqHIaXPMKhmWQ7ktreCAV8XdwFcWXvpobH6fL34Xv9w/t33/NgkUEs8/62pNZYaF+lx95r08AAAAB0DoQCANpABSP9EwrqusLr5WbSv8pB4kiTYLSZUCC74g7ViQ1sa+tpcTzzjZwO2J94k2tPIK+D8WZJuGXynNxv/ZzWmVAQZPoaNChKuGYY8m1YncggTYsrYc9RG4QCcFHxu5/9zStE2qae5WaJn/In49ZbfI9/8fhA06Qw4OjFJBPoJ3v0+IFI7M1tpS+0hyi4/LMWD4entiix9cXfL7zRougz7nHAb81tU73HbF+vhIIgc/gzeT71CbZ3udVWj5+s/43xWpe/j4DrH2ge/+5/HgG/LbIYcKNzqzcAAACdA6EAgDZQwUj/hIK6YMy1/DM9nvMPAF3WTCjwBHIucx3PE7Bb5l2u/nZ1A3bazhdKvRbB9fp7ur+UtsazBgWe6hp2KhR8pbV8lVa4O2zaoLtTemxswLVLvUyr4RtPPtaPT5YWHHw3MggF4KLidz/7m342/EQ0X78mns03hyLZ3qOHz3IUm9Dj4z3+pJlQYPo5JXgqsZJ7EqTYf8TUW3MlJtjTm3r9c2ojp4Z38fHk+PotWjJqtg/Qxw62MZrXXfSVUBA064FjxgO5T59k2LO8/rek8XLbuvx9BF1/05r4d//2Bvy2BF2bBgYAAKBzIBQA0AYqGBkcoSBUsnpOQkHdOe4c0oIcyyvWFQH19dgCRR8Y9DDJvRZ8zlWbuobtCwWu4H90jsZjaZpOb9M093qou3ZfRIC/IIcb3Hp2GNjbAEIBuGr43c/+1iwxNZPpr7Satmc2GY4s0PhMlmbWtijGyzz+xPo7yDdqcUD2Hsjv0R32u+zTZI8pfmuuhyc46o34J61f6Lnxge47ivINz+mhB4HHrrfeDD2oXy9ouW1d/j6CrkFI/+7f3oDflqBr08AAAAB0DoQCANpABSOdCwV1b9tlYNuqUNBg6MHrLboWeUoPuchUx0MPRPuliBAQzNUt9z9HWURM7GvhtbuAoCp86HOu2tQ1bFMoeLsng9zRpX164aoMrodHuBL9GiUecFGtObq74R4HXG8QCsDVwu9+9jf9bHgLgApTz7IeHqD9TjR96F7PHK/u8SdNE1Vh0sfE3tMq+xRdsNDc34wh9uOqVxAmyf5KqTVe554q5vfmvSwMaw+LCLbWhAK9f8fyF+urrrYFtbX5OXT5+wi4/mH9u397A35b5LEanVu9AQAA6BwIBQC0gQpGOhEK9Nh2z9R6snssB2ktCgX+xQy/0soTEbSZAkIzoaBZMcOJd/Rc/h0QzNUt10m4a7ypfUz3Mb5QgouA+Z2rNnUN2xQK9PWqq/Ww9U4W6LKvgbhmSSUSuAt+BRlqFICrhd/97G/6WWe/5+qlJJ4ZrqCvfZ/lGz09mbgonhwWZD1b4YUC/mx4aJViceFTrPojaojW6NQjkQi7k06Xf361TeMR52wLyrJyuIKZyAvfxj7RW9BV+9zhiC4gK5aFFgp0gh5bdybYNfsa6vb6J9jBy23r8vfhe/3D+3f/9kIoAACAQWLAhYIq5flHI1/Vf3ePk1JS/PAkqXSiF3SRal60mdsdaHlxZufE6RGVjF2q6T97eY0vMyoY6UQo4DcvnJCO0a0njimuJlbpjkiuWxUKZEApp0ec01Na7dPDJdV13qrIryv0jz54L47X+fSI9clx/fKVJ+JvPS7YXGae9/gSt0Md4+7UbRoeFeY6J7epa+gXcAe1x2F87jzsYPQp3Ten7Equ0vWR23SNuxWb10AE63Iar1ia5v3GFK99cr9l09e0+fSKboNQ0ALVvLzXu++iTqjESVyyJP4HwuJ3P/ubmZiq526epxrceE/T7E9GVu1EVD9zw3o6PB4Tv/DgEV3jZ5OfWeu5bkEoMN9+C3POSKLedovlnqn2XP5555DmOXEWbZ5eU9MDPl7LySn6huf26nyl5VM2PtD9uPa5jkr+oYUCM2EfeUQz8lqp6RZvzK3SuOO3wz/BDl5uW5e/j4DrH9a/+7cXQgEAAAwSEAp6JhQkKFcoUMHXDuhYr9tv1Hk7hQoIBe2ggpHOhIK/4XHwPL+0HP8qAsL4Nq28VW+QWhcK2MT+0lm6FVFvbq7xPOCvnAksjz3l5JiPx2N164UCtrWtPZqPz+kxqqpdiTfOt+vhhQLV3TRNj3UFcmXO8+Z2ckD+iV7kVdLtnKvcaeoatikUCMtufaBps3ihLFDG5/VFJQ8j6g2glUgEmedaqfNrLYBlg1DQAhAKBgq/+9nfbP+ysiESbemXlD9Z9jwva694nn49rn10jqIiyVwR/inxQPztnZa1SaKq7Iva1ltzRVbPrx8yUOef3x7SQ0dtAm5T7NlH17PPlnX5Sh6PL3yuYQsTbOGFAmFvP9F9c3/ymJ9oTc6wYLctSBAIWm5bl7+PwOsfzr/7txdCAQAADBIYetADlFBwjr0GGlAvFIB2UMFIeKHgytqOCPxuervT9sA4mG4iFHTfvtLyExFse4aPhLHzFArK5TIdH5+XVAkuOn73s7/5C5Gw87Kr9X0AAADonC4LBfoNTb5Kp9UCpSYjIimN0GTCoNLRqV7H5IyOynnKLE5ShBVkYdF4kozSkfjExPu2W/2dLFWpnOHtxL6/+2u6K/51v22qUWFWbBfJO7rYC2oFmh1apKKIket7FIj2lAxKxqOyLUPROCWNEtU1+6RChUxcjvUeGopSPJOn8pHdYia0UCDflPn0avAst5L706p97MgkJbh97kOL0ziicj5D8Si3ga9phvJldU3rhkTIi+bfo+Cksku5hP5u+Fi5XXF8/SFjtvGIhzIkaDLC++TrUXCvd0lRwQiEgjCWWntU19W32/Y8/SiwJ0LPTBZIrC8+FsbOUyhYXFyUz//y8jJ9//33dHra7Qe2ld+BU6ru5my/y+stZqjgdCLeHgWm76mWKcP7Fv7p6b9MqWVOX3p6QDneZ6rs6jFwesC9QAyqnPn0KBD+s2QkHf5T/SbVtfqoREYj/3iJ8buf/Q1CwWAZhAIAAACt0RuhIB6neGSRjOIBVQ5KtJngQDFO+Zqd1R4XE2JZlJL5Eh1UKlQpF0XgpQLK3IEZcfkLBZFIhOK5otiuTEWx/7xIUmcLDkngpERJ3k6LAia1wiwNzRakeOAVCtTfccoUVHsOSpuU4OQ3UbSGCZzVCrQolkWTeSodiDbzsZMc4IpzqzrkjZ4IBeKaimBaXa8DKuWTUjCIbFZsYeVMXJ+4OLa49pndMlXE9dnNLEpBJVU+EcFthcqbnCRkaJevuQza64WC41JKBsDxzC6V5bXIU5ID50iKSubFkG2clW1a1OuVdzPy+jiv2WVFBSMQCkKZHPN7j8IVB2zHDul+fJtWXUXFem8sgAz7VBAPY4MgFLD97Gc/k/+aokF3CPs7cEYVgxN901+xrylQhn2YWM9y6b5CQUT8DsQpx/sWvx0H/4fy+fZvh0Csp0RoFgX0MpHyH+TEstyB+J9XKDDbnaFCSeyX/exmQu4j4fghOSlnhO+NWH6vUt6lzCKfh8M/XmL87md/g1AwWAahAAAAQGv0RijwJM4i9aRiQiy3Esga7S5OUlxEfs616KxCm5xoeoSBur8Xd+lIL1HBpljmeCsk3xjNcpDqDBxFGxZtQcEtFOh2b7pT+zOxn8hkRgd/6hwiBgeYTnSw60iOeyMUcE8KdxRazXPgbR9HiS8Jlzii2helyWRRXjO1L2fbPNf4tEwZ8fesuBau7+b0gAxxPS1hQgfv3vXc1/XyooIRCAVhTRb+6nGvgr4aFzEc1dOJ+X3exAZFKHAaiwbffPMNZbNZ+uGHH/Ta7RDyd4B9CoufXmdxXKSEaI+1XPsat1AwRIu79q+A6d8j1kpaGGaxYmjWFh3Eb4whts2U2Yt7hAItMLt/Bs7oIBehyUxJtVn/RiVcx2b074NTuL2k+N3P/gahYLAMQgEAAIDW6I1Q4FMcSiWQKSo3TCD19oYZbAUIBY5gkFFdSXNkagIygd4sUznnCBxlEGgPUXAntCKZ3uQ3QgnKHxzRqV+kd6yCyGSB3zRVXKbe0tvJcV0Xf5c5kvSWhALxt1sn8JzDCZVTYv8+196J2iZYKFDX0t0Tw0QG3ubbOR2se7QVa7nnK7p0qGAEQgGsPRtEocA0s5eBKRrUao7eWqHo9HdA+aRF0wl5fUqAj3H2GDPbkCyV5TA0p+gQcfhMVzu1CBBJ5Ong6NQ/4a9uimNPklF0/waw7Wb4+oUQiC84fvczDDZoBgAAoHN6VqOgDt/g7oxOT46oyl08dzftMfFWgBlOKBDRp0ziDZnBqjdL3JPgmIPSRfX2yh6XKrfwJNmC4wMyuPso739IjZPNlyp0bHYf0O0PtgjldTythIKgWQ8cMx7IfTraYOJZXtdWjXt5TQ7B8L32DpoJBepzZ1ddG9fxfL9PQdDyBnAi8t13310oe7j2XgQjEApg7dl/8V8u+t5X/bCbN2/KZzSM/eQnP5H//sVf/AX9/ve/D1nPoI3fgeOaSLbLVCwYlDHrFZgrebdp4Hsipsgpew6ongTVTbEvLT5LMUH/JljtdAgaxweGGj7Fx49M0mImT6XKsdWLTPlA/bmvNRNBbC6i3zMMw/d+hsEGzQAAAHROn4UCO5l2BWTROC2KxNzYLYhkXfzdqlCgxQHZe+CkTClOZjkSlMULOXDTwxPkuFSFO8m24XH8pYKjuJY57jQoOPWhN0MP6tdzLw+6Nm7UNoMlFHAF9j/84Q8XynhubQgFsHbtv/6XW773VT9scnJSPqPNzOxZMDU1JUXO8DMlhP0dOKParqq1wseJTC7SYjJHm8W8HP5kbe/1KUE+Rg8rkL0HaiwabEo/J0ViWdhW/U7Y9WzqhQLFKR1VSlTI2UUNIyk19CDIF7fDRfR7xWLR936GwQbNAAAAdE5vhAJHQm6iAiw9PMAcB28ckMjhHahArnWhwH5TVKsYdvdTHThuVsR2EXehqzAB39lxUfZUkIGl+P+i+L/VHbYBrQkFjvGzmpOyu4J3UFvdy4OHHvD+ovFNmfyrbYKFguZDD1TwHRisBy2/ZKhgBEIBrD0b1KEHpjgwPj4u3x63N41iyN8BKeSKxH635l5P++2WhQKxF1mo0KhQrSjO0Ty+9N3CT1a555nT3wYJBU7OxObcZrXdGf++iGOr3mtXE7/7GQYbNAMAANA5PSpmKIIyV3xZowJXss6UVeCmA7268e1Hu7KIVTtCAe8zMpSiTCbiqHGgkufZREIEpO5E251kV6nAxRW9GfuZml5LvYFSxaqGZkWi7IoRz6i6OUuRSZWIM6GFAh0oq8JaJsf2NdTtDScUcDzsV8xQ709f02ZCQdNihmbwHRSsBwbxlwsVjEAogLVngyQU/PSnP5X/8mwyLA60XpPAS7jfAct/ebSI0wNDDUEznYjXpzTwMXKfkQxlhN+3RV01LCshfge4Z4G9mUcoqBZocdIx24KGi9pagq6uY8DbuJut/Gw0oYrGXmb87mcYbNAMAABA5/RIKBAWTVKep5g6KKqx/86po3h+aw62xDqFMheC4un+UjQZiVKUu3q2IxSYb6GE8VSAJuotuFjumbLPnWSfUS0fF39HKWkU9ZRXerpG0W5zd2ciQI3zvsx2H5SoYE4/6Ih2QwsFZuAcSdCmvFZqusV4KqXegOnjegUBk7rl1vSIen+VMhXM6Rv1lGSqx8Csmlas4+kRIRR4g5NzsVdb8prPv/L5rCf2ieb5nkl+8vmse5bayNGtyJg8N67UvfLyqfj/U1rKq89fyL+3aMWz3UWw8xYKfvSjH8nr+qtf/YoymQyVy2X9aTcI+TtQK0h/Glk0qMjTzfJ0rrkERfl3gH8fTCfSglBg9vxyDnMTXk/1NOBjuWYl8AgFZzXlP0WbjaKarrFcNOQ0uZFUWf8m2f7Rajf/VvhMk3tZ8bufB9myr99RbOK2/P6HRoym/uKF8Z6m4wt0fUTdM8ORBYol9+h5WzOcKF8ZffnZ57POrG3/97ZKS0vvaNXvs5DmmsVGzgCTo+U+T0/bzAAAAHROb4QCEXhVD0SANcnFAUXimylQxZPknh2VRCKuixfKolEFOjg+VYl9xHw734JQYAWDnm7zskp1/ZCB+uRbHLvoqE0Q2O4y5TNxPa5WFT0seFYKLxQITqtUMPcXjVOmUKVTOcNCG0IBc3ZE5XxGj60V7UsYVDpyBK8iGN5N6esug1//a3pS2bWLS4rvJ2EUqebs+AChQBiEAv/Pu2GfaEYcY3hqix4bH2n59WdKQSjoCiwU/PVf/3WXxQEn4X8HTqsFu3ih8H8s1FZPTpQvN8XdVoQCFl9nxbaeOiuysK3Yxj1kwCMUMKc1KjpqEyifXLE/15xWHf6Rzy3JftbpIC8vfvfz4FpNTQk4kaWHG8KPGFVa812PTawbZ0FhjMbj27Qk19+npWdpGmfRYGSVlt74bdfIBk8o6Nhv7hzS/MQ98Xvz1VqWWntEw0sfKetc75wNAABA5/RMKPAGVgBcJlQwclWHHvRBKMh/kOJZowAbQsGggt+By4zf/Ty4FtZXfaWVJ/eEP5kTCfCX+s/f7tP0TbGfie0W38RfPqGARQHu4fXCuXznI02P3KP7rx3LztkAAAB0DoQCANpABSOD2aPACgTffqL78Tm6xoHySIxuLX2g5027h36l5+tbFIvFaJi3E3Zt4ilNv6w63haZwfdHSm1s0R09PODaRJruu4JsM0iu0vOXObo1yvu7TTfi27SsewX4mWq/OrZpfG5qeZMeBfmP9jnLY23R4y37zdegGIQCcFHxu5/Pxz7TcjprDU8ajjyiu+lPdo8B7RedFpiwv3lPt8Tno88O/T8XtraepeuxtKNXQXhf6T3u2qt3dHdKb8e++cE74a/157Ldtp+zzLPcz/9lt/Zo3jFsYmh0jqIOv7/Cz6VuqzSngBLGd+58pBmx77sb9WLKSlJ8D/G9Bj02+msAAAA6B0IBAG2ggpFBFgrm6MbEbYomP1CCu88mn8oAcPhJ4+6h8m2RCBLVdh9pef09TU9xID7mCA61UDAyRtdE4LywLtbbEOvFeL1H9NAKpNV6oxNzNDz6lO7zeus8Xpi3XaXHAWJBNn8o1jNoXGw7/mRPTkXJ44ObCQXZ19uyi/C1mS3VbXjjA83PcFdifks4WGIBhAJwUfG7n/tvNVqaY38zR7E0+wiHj5v7oMfOV8Vy4W/YV8XfST+ymvf3A6m1BbGvBYfvam6t+EqnUJB6uSoFAtNPJV5uUZRF1IktWuWEvl2hQIsdlv8z9ujh0iN5rOEH+zKBX9v6SI+f8LkKv81t3lLtDOs7swbXOMpSwq9eg2jfsMv/n68BAADoHAgFALSBCkYGWSjg4LTmWk++8fG+gXfZIS3EYnQj+cktJui3SPbbJ1Mo8BSw0oGqfVxzPc/YXtlNtYlo4TP0oLFQUKOHU2KfSyogtvbzt19peUmct1l4a0AMQgG4qPjdz/22tfW0ePbv0YxHAFzbyIlkdYxmDHO59kFNhh6sPBHrDDUvdGhba77S8mP687rx/Ow7R+dUu9sUClbTC3R9Qvzt6jUm/N8Tt9+vExhC+07+W5zbjBZivMZFDcW53lkP6LXRZwMAANA5XRYKALgaqGBkkIUCEVB63ux4E+3w9lkVBLOCWx18P/EG396gXP097BOkS9FiZCt4vG+rQsEbvf6zffnm0GnqDVo75907u9xCAbjM+N3P/bUvlHgg/EzMT/w7pPtcS8DrqxoKBdq/uZLnds3fV1p+7DW/dR+zfLWvtSkUBJlazxZ167YL7Ttr9DDW6Frqa9/wWvfPAAAAdA6EAgDaQAUjAy4UeALNoOX19pXW8lVa4e68acMeS2sVsAoKvv2FAmeyb1rTtrQqFOhrEGwiOB+gQlsQCsBFxe9+7q95k3Gfz5r6Krepsfut9CgwLZyvNP3Yi/VVcZwmPrhDoSD79jM9f8VDGt7RzINHul5Bg+1C+051LsF1HLzX/nwNAABA50AoAKANVDBy+YSC1EZOTQXGAeLoHI3H0jSd3qZpfpPUdaEguE5Bu0JBwzd1A2QQCsBFxe9+7q91XyhQvqRJjYI37yk68ZRmNpRPasVXWkJBCB/ctlDwZl/XieE23aYbsQWKLb2j+0vuHlV124X2ncH+XBmEAgAAuGxAKACgDVQwcsmEgrd7svDX6NI+vXCNc9VdTtsUCvzeQMmhBzcbTDXW8tCD96r44Zq7LsOgGoQCcFHxu5/7ayGGHljDooJ8lcd0fZVGsx6o4oV6CsAWfaXlxwKHHhzS/GiMomtV7c/1cRzreHsjuBP+L/Q4Lo57M0cJT8FGVaixgVAQ2ncG+3NlEAoAAOCyAaEAgDZQwcglEwr0fma8QezWOxlEtysUDN003AW28nt0d6RxUN5uMcO6Y/2tmh99OGK4Cy+es0EoABcVv/u539asmGHdDC3NhAKzcJ+s8l8/9V926z3d4SKEc3vKB7boKy0/FlDMMPvKoFFTQHi9Lf4/RLF1ZztqKgkP9H/6POvqxlRpgf1iI6EgtO/UIkjdMUxDjQIAALhsQCgAoA1UMHLZehTsywR+yJzKUE45tkrXR27TNZ6+q12hQNiwOY3i+rY1FZg7KPVYy0IBB9tbdIOPZ7Z/4wPdjy/IxOGOZwaI8zYIBeCi4nc/999CTI8oLchX+diOSHT19Ibj8W3HFINqvy6f1aKvdPoxc3rEG/F39Nj4SIk1NYTBEiE44ZZTyD6imZf71lSFN+ZWaTzQ/3EvC277bYo+U1PK8rSLdyJjoj08zaG93dpGVvx9j+6uiX2b0yOG9J1ydgjfnhzC9KwHtkhzvgYAAKBzIBQA0AYqGLl8NQqyWx9o2izINRKTAXPizRdafXZP/G2+WWpRKEju02o6TTc4gBb7vLX0gZ77zcPttDaEArbs1h7Nx+dUYC+C3OuxNN037H0MikEoABcVv/v5fOwzLaezdEskw1KMjDyi6bVDzxR/LQgF0r7Q8/UtisVMHzJE1yae0t30R53E29aKr3T6Mba1V+/swoejcxR79snd7refRKKu22B+LmcnaOD/dqq0tGQWL9S+b6NGa7KHgmPKyJ1DWpjTx7bEiXC+M2vkxGdpeuzjv9VnjX9f+mkAAAA6B0IBAG2ggpEBEQoG1loN0q+OQSgAFxW/+xl2RWxH+PSb3mERbF9p+ckYDcX3PELN+RkAAIDOgVAAQBuoYARCQWODUBBkEArARcXvfoZdHZNFHac8ww9kccf6AoznaQAAADoHQgEAbaCCEQgFjQ1CQZBBKAAXFb/7GXaFbOeQ5ifu0byjkCSLB8MP9gemNwEbAACAzoFQAEAbqGAEQkFjg1AQZBAKwEXF736GXS2TxQ/NXgVcxHA0S4lmdWf6bAAAADoHQgEAbaCCEQgFsPYMQgG4qPjdzzDYoBkAAIDOgVAAQBuoYARCAaw9g1AALip+9zMMNmgGAACgcyAUANAGKhiBUABrzyAUgIuK3/0Mgw2aAQAA6BwIBQC0gQpGIBTA2jMIBeCi4nc/w2CDZgAAADoHQgEAbaCCEQgFsPYMQgG4qPjdzzDYoBkAAIDOgVAAQBv4BSYwWFiDUAAuKv9T+R9hsIE3AAAAnQOhAIA24EQPBmvX/uk//md9JwEAAAAAADB4QCgAAAAAAAAAAACABYQCAAAAAAAAAAAAWEAoAAAAAAAAAAAAgAWEAgAAAAAAAAAAAFhAKAAAAAAAAAAAAIAFhAIAAAAAAAAAAABYQCgAAAAAAAAAAACABYQCAAAAAAAAAAAAWEAoAAAAAAAAAAAAgAWEAgAAAAAAAAAAAFhAKAAAAAAAAAAAAIAFhAIAAAAAAAAAAABYQCgAAAAAAAAAAACABYQCAAAAAAAAAAAAaIj+f5oZqSIQwvl6AAAAAElFTkSuQmCC" alt />
+<p class="caption">Calculate</p>
+</div>
+<!--
+
+
+
+-->
+</div>
+<div id="vacation-example" class="section level2">
+<h2>Vacation Example</h2>
+<pre><code>Version: 2.0
+Alternatives: &amp;alternatives
+  Beach:
+    cost: 10000
+  Mountains:
+    cost: 5000
+Goal:
+  name: Vacation
+  decision-makers:
+    - Dad: 0.4
+    - Mom: 2/5
+    - Kid: 0.2
+  preferences:
+    Dad:
+      pairwise:
+      - [Costs, Fun, 4]
+      - [Costs, Spa, 9]
+      - [Fun, Spa, 4]
+    Mom:
+      pairwise:
+      - [Costs, Fun, 1/4]
+      - [Costs, Spa, 1/9]
+      - [Fun, Spa, 1/5]
+    Kid:
+      pairwise:
+      - [Costs, Fun, 1/9]
+      - [Costs, Spa, 1]
+      - [Fun, Spa, 9]
+  children:
+    Costs:
+      preferences:
+        Dad:
+          pairwiseFunction: 
+            function(a1, a2) min(9, max(1/9, a2$cost/a1$cost))
+        Mom:
+          scoreFunction:
+            function(a) a$cost
+        Kid:
+          priority:
+            - Beach: 1/2
+            - Mountains: 0.5
+      children: *alternatives
+    Fun:
+      preferences:
+        Dad:
+          pairwise:
+            - [Beach, Mountains, 1/6]
+        Mom:
+          pairwise:
+            - [Beach, Mountains, 2]
+        Kid:
+          score:
+            - Beach: 5
+            - Mountains: 0
+      children: *alternatives
+    Spa:
+      preferences:
+        Dad:
+          pairwise:
+            - [Beach, Mountains, 2]
+        Mom:
+          pairwise:
+            - [Beach, Mountains, 6]
+        Kid:
+          pairwise:
+            - [Beach, Mountains, 1/2]
+      children: *alternatives</code></pre>
+<!--
+
+```r
+ahpFile <- system.file("extdata", "vacation.ahp", package="ahp")
+cat(readChar(ahpFile, file.info(ahpFile)$size))
+```
+
+```
+Version: 2.0
+Alternatives: &alternatives
+  Beach:
+    cost: 10000
+  Mountains:
+    cost: 5000
+Goal:
+  name: Vacation
+  decision-makers:
+    #optional node, needed only if not all decision-makers have equal voting power
+    - Dad: 0.4
+    - Mom: 2/5
+    - Kid: 0.2
+  preferences:
+    Dad:
+      pairwise:
+      - [Costs, Fun, 4]
+      - [Costs, Spa, 9]
+      - [Fun, Spa, 4]
+    Mom:
+      pairwise:
+      - [Costs, Fun, 1/4]
+      - [Costs, Spa, 1/9]
+      - [Fun, Spa, 1/5]
+    Kid:
+      pairwise:
+      - [Costs, Fun, 1/9]
+      - [Costs, Spa, 1]
+      - [Fun, Spa, 9]
+  children:
+    Costs:
+      preferences:
+        Dad:
+          pairwiseFunction: 
+            function(a1, a2) min(9, max(1/9, a2$cost/a1$cost))
+        Mom:
+          scoreFunction:
+            function(a) 1/a$cost
+        Kid:
+          priority:
+            - Beach: 1/2
+            - Mountains: 0.5
+      children: *alternatives
+    Fun:
+      preferences:
+        Dad:
+          pairwise:
+            - [Beach, Mountains, 1/6]
+        Mom:
+          pairwise:
+            - [Beach, Mountains, 2]
+        Kid:
+        # Often, entering pairwise preferences is lengthy, especially if you
+        # have multiple alternatives. Instead, you can enter scores, i.e. rate
+        # each alternative on a scale. The scale can be chosen freely. The 
+        # priorities are derived as score / sum(scores)
+          score:
+            - Beach: 5
+            - Mountains: 0
+      children: *alternatives
+    Spa:
+      preferences:
+        Dad:
+          pairwise:
+            - [Beach, Mountains, 2]
+        Mom:
+          pairwise:
+            - [Beach, Mountains, 6]
+        Kid:
+          pairwise:
+            - [Beach, Mountains, 1/2]
+      children: *alternatives
+```
+-->
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -7,15 +7,24 @@
 \alias{PruneLevels}
 \title{Analyze your AHP model}
 \usage{
-Analyze(ahpTree, decisionMaker = "Total", variable = c("weightContribution",
-  "priority", "score"), sort = c("priority", "totalPriority", "orig"),
-  pruneFun = function(node, decisionMaker) TRUE)
-
-AnalyzeTable(ahpTree, decisionMaker = "Total",
+Analyze(
+  ahpTree,
+  decisionMaker = "Total",
   variable = c("weightContribution", "priority", "score"),
-  sort = c("priority", "totalPriority", "orig"), pruneFun = function(node,
-  decisionMaker) TRUE, weightColor = "honeydew3",
-  consistencyColor = "wheat2", alternativeColor = "thistle4")
+  sort = c("priority", "totalPriority", "orig"),
+  pruneFun = function(node, decisionMaker) TRUE
+)
+
+AnalyzeTable(
+  ahpTree,
+  decisionMaker = "Total",
+  variable = c("weightContribution", "priority", "score"),
+  sort = c("priority", "totalPriority", "orig"),
+  pruneFun = function(node, decisionMaker) TRUE,
+  weightColor = "honeydew3",
+  consistencyColor = "wheat2",
+  alternativeColor = "thistle4"
+)
 
 PruneByCutoff(node, decisionMaker, minWeight = 0)
 
@@ -56,9 +65,6 @@ the Prune methods must return \code{TRUE} for nodes to be kept, \code{FALSE} for
 \description{
 Converts the calculated AHP tree into a \code{data.frame} or an HTML table, containing all the weight contributions or
 priorities to/of the overall decision. You can also sort and filter the output.
-
-Displays the AHP analysis in form of an html table, with gradient
-colors and nicely formatted.
 }
 \examples{
 ahpFile <- system.file("extdata", "car.ahp", package="ahp")

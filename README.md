@@ -83,6 +83,36 @@ myVacation <- LoadFile("C:\\tmp\\vacation.ahp")
 # NOTE:
 The latest from github dev branch may have some breaking changes compared to CRAN. See [NEWS](https://github.com/gluc/ahp/blob/dev/NEWS) for details.
 
+# Include Analyzetable Tables at R Markdown A PDF output
+
+Check the vignette: "exampleRmdpdf.Rmd".
+
+```{code = R}
+library(ahp)
+ahpFile <- system.file("extdata", "car.ahp", package="ahp")
+carAhp <- Load(ahpFile)
+Calculate(carAhp)
+print(carAhp, priority = function(x) x$parent$priority["Total", x$name])
+
+library(formattable)
+library(htmltools)
+library(webshot)
+export_formattable <- function(f, file, width = "100%", height = NULL, 
+                               background = "white", delay = 0.2)
+{
+  w <- formattable::as.htmlwidget(f, width = width, height = height)  
+  path <- htmltools::html_print(w, background = background, viewer = NULL)
+  url <- paste0("file:///", gsub("\\\\", "/", normalizePath(path)))
+  webshot::webshot(url,
+          file = file,
+          selector = ".formattable_widget",
+          delay = delay)
+}
+
+export_formattable(AnalyzeTable(carAhp), file = "table01.png")
+```
+
+
 # Getting Started
 
 # Conventions

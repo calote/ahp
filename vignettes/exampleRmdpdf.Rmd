@@ -1,0 +1,76 @@
+---
+title: "AHP Example in pdf R Markdown"
+author: "Christoph Glur & Pedro L. Luque"
+date: '`r Sys.Date()`'
+output: 
+  rmarkdown::html_vignette:
+    toc: yes
+    toc_depth: 3
+  pdf_document:
+    number_sections: no
+vignette: >
+  %\VignetteIndexEntry{AHP Example in pdf R Markdown}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteKeyword{PDF}
+  %\VignetteKeyword{HTML}
+  %\VignetteEngine{knitr::rmarkdown}
+---
+
+
+```{r set-options, echo=FALSE, cache=FALSE}
+options(width=120)
+#opts_chunk$set(comment = "", warning = FALSE, message = FALSE, echo = TRUE, tidy = FALSE, size="small")
+knitr::opts_chunk$set(warning = FALSE)
+#read_chunk("some/script/I/want/to/load.R")
+```
+
+
+## Export Function to image (pdf and html)
+
+```{r}
+library(formattable)
+library(htmltools)
+library(webshot)
+export_formattable <- function(f, file, width = "100%", height = NULL, 
+                               background = "white", delay = 0.2)
+{
+  w <- formattable::as.htmlwidget(f, width = width, height = height)  
+  path <- htmltools::html_print(w, background = background, viewer = NULL)
+  url <- paste0("file:///", gsub("\\\\", "/", normalizePath(path)))
+  webshot::webshot(url,
+          file = file,
+          selector = ".formattable_widget",
+          delay = delay)
+}
+```
+
+## Example
+
+```{r}
+library(ahp)
+ahpFile <- system.file("extdata", "car.ahp", package="ahp")
+carAhp <- Load(ahpFile)
+```
+
+
+```{r}
+library(data.tree)
+print(carAhp, filterFun = isNotLeaf)
+```
+
+
+```{r}
+Calculate(carAhp)
+print(carAhp, priority = function(x) x$parent$priority["Total", x$name])
+```
+
+
+```{r}
+Visualize(carAhp)
+```
+
+
+```{r}
+export_formattable(AnalyzeTable(carAhp), file = "table01.png")
+```
+

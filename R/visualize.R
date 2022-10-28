@@ -103,8 +103,8 @@ GetTooltip <- function(x) {
     prio <- x$parent$priority["Total", x$name]
     tt <- paste0("priority: ", percent1(prio), "\n")
   }
-  #browser()
-  myfields <- x$fields[!x$fields %in% c("preferences", 
+  
+  myfields <- x$attributes[!x$attributes %in% c("preferences", 
                                         "weightContribution", 
                                         "name", 
                                         "consistency", 
@@ -112,8 +112,13 @@ GetTooltip <- function(x) {
                                         "preferenceFunction",
                                         "decision-makers",
                                         "score")]
+  #myfields[myfields=="fieldsALL"] = "attributesAll"
+  #myfields[myfields=="fields"] = "attributes"
   if (length(myfields) > 0) {
-    mylist <- as.list.environment(x)[myfields] 
+    #mylist <- suppressMessages({ as.list.environment(x)[myfields] })
+    mylist = as.list(x)[myfields]
+    #mylist[mylist=="fieldsALL"] = "attributesAll"
+    #mylist[mylist=="fields"] = "attributes"
     props <- as.yaml(mylist)
     tt <- paste0(tt, props)
   }

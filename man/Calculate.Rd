@@ -4,8 +4,11 @@
 \alias{Calculate}
 \title{Calculate the Ahp tree}
 \usage{
-Calculate(ahpTree, pairwiseFun = PrioritiesFromPairwiseMatrixEigenvalues,
-  scoresFun = PrioritiesFromScoresDefault)
+Calculate(
+  ahpTree,
+  pairwiseFun = PrioritiesFromPairwiseMatrixEigenvalues,
+  scoresFun = PrioritiesFromScoresDefault
+)
 }
 \arguments{
 \item{ahpTree}{a data.tree tree containing the Ahp model specification}
