@@ -5,7 +5,7 @@ Version: 0.2.15
 Date: 2026-10-03
 Author: Christoph Glur [aut],
     Pedro L. Luque [cre]
-Maintainer: Pedro L. Luque <calvo@us.es>
+Maintainer: Pedro L. Luque <pedro.luis.luque@gmail.com>
 VignetteBuilder: knitr, quarto
 Encoding: UTF-8
 Imports:
