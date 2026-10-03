@@ -56,9 +56,9 @@ remotes::install_github("calote/ahp", build_vignettes = FALSE)
 
 ```{code = R} 
 
-devtools::install_github("gluc/ahp", build_vignettes = TRUE)
-vignette("car-example", package = "ahp")
-vignette("multiple-decisionmakers", package = "ahp")
+devtools::install_github("calote/ahp", build_vignettes = TRUE)
+vignette("examples", package = "ahp")
+vignette("laptop-choice", package = "ahp")
 
 # run analysis
 library(ahp)

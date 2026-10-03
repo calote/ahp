@@ -3,8 +3,9 @@ Type: Package
 Title: Analytic Hierarchy Process
 Version: 0.2.14
 Date: 2026-10-03
-Author: Christoph Glur
-Maintainer: Christoph Glur <christoph.glur@ipub.com>
+Author: Christoph Glur [aut],
+    Pedro L. Luque [cre]
+Maintainer: Pedro L. Luque <calvo@us.es>
 VignetteBuilder: knitr, quarto
 Encoding: UTF-8
 Imports:
