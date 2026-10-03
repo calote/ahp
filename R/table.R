@@ -77,6 +77,85 @@ AnalyzeTable <- function(ahpTree,
 }
 
 
+#' Displays the AHP analysis as a \code{\link[tinytable:tt]{tinytable}} table,
+#' with the same gradient colors as \code{AnalyzeTable} but rendered natively
+#' in each output format (HTML, LaTeX/PDF and Typst), without screenshots.
+#'
+#' @param fontsize Font size in em units, passed to
+#'   \code{\link[tinytable:style_tt]{style_tt}}. Useful to fit wide tables on
+#'   a Typst page (e.g. \code{0.8}). \code{NULL} keeps the default size.
+#' @return AnalyzeTinytable returns a \code{\link[tinytable:tt]{tinytable}}
+#'   object. Note that, unlike \code{AnalyzeTable}, no warning icon is shown
+#'   for high inconsistency (only the background color); values are otherwise
+#'   identical.
+#'
+#' @rdname Analyze
+#' @export
+AnalyzeTinytable <- function(ahpTree,
+                             decisionMaker = "Total",
+                             variable = c("weightContribution", "priority", "score"),
+                             sort = c("priority", "totalPriority", "orig"),
+                             pruneFun = function(node, decisionMaker) TRUE,
+                             weightColor = "honeydew3",
+                             consistencyColor = "wheat2",
+                             alternativeColor = "thistle4",
+                             fontsize = NULL) {
+
+  if (!requireNamespace("tinytable", quietly = TRUE)) {
+    stop("Package 'tinytable' is required for AnalyzeTinytable(). Please install it with install.packages(\"tinytable\").")
+  }
+
+  df <- GetDataFrame(ahpTree = ahpTree,
+                     decisionMaker = decisionMaker,
+                     variable = variable,
+                     sort = sort,
+                     pruneFun = pruneFun)
+  df <- df[ , -1]
+
+  alternatives <- GetAlternativesNames(ahpTree)
+  dfw <- df[ , alternatives, drop = FALSE]
+
+  dfw[is.na(dfw)] <- 1
+  if (variable[1] == "weightContribution") cols <- dfw/max(dfw)
+  else cols <- dfw/apply(dfw, MARGIN = 1, FUN = max)
+
+  cols$zero <- 0
+  cols$max <- max(cols)
+  cols <- t(apply(cols, MARGIN = 1, function(x) formattable::csscolor(formattable::gradient(x, "white", alternativeColor))))
+  cols <- cols[,1:(ncol(cols)-2), drop = FALSE]
+
+  displevel <- df$level
+  names(df)[1] <- " "
+  disp <- df[ , -2]
+
+  numcols <- setdiff(names(disp), " ")
+  bg <- cbind(Weight = formattable::csscolor(formattable::gradient(df$Weight, "white", weightColor)),
+              cols[ , alternatives, drop = FALSE],
+              Inconsistency = formattable::csscolor(formattable::gradient(pmin(df$Inconsistency, 0.1), "white", consistencyColor)))
+  bg <- bg[ , numcols, drop = FALSE]
+
+  # NOTE: tinytable's `background` only accepts a single color per style_tt()
+  # call (a vector fails at render time), so background colors are applied
+  # cell by cell. `background` must also be the last style applied: any later
+  # style_tt() call with selectors re-validates the stored backgrounds.
+  if (variable[1] == "score") fmt <- function(x) ifelse(is.na(x), "NA", as.character(x))
+  else fmt <- function(x) ifelse(is.na(x), "NA", sprintf("%.1f%%", 100*x))
+  disp[ , numcols] <- lapply(disp[ , numcols], fmt)
+
+  t <- tinytable::tt(disp, width = 1)
+  if (!is.null(fontsize)) t <- tinytable::style_tt(t, fontsize = fontsize)
+  t <- tinytable::style_tt(t, j = 1, bold = TRUE)
+  t <- tinytable::style_tt(t, j = numcols, align = "r")
+  for (i in seq_len(nrow(disp))) t <- tinytable::style_tt(t, i = i, j = 1, indent = displevel[i]-1)
+  for (j in seq_len(ncol(bg))) for (i in seq_len(nrow(bg))) {
+    t <- tinytable::style_tt(t, i = i, j = match(colnames(bg)[j], names(disp)), background = bg[i, j])
+  }
+
+  t
+
+}
+
+
 #' @param node the \code{Node}
 #' @param minWeight prunes the nodes whose weightContribution is smaller than the minWeight
 #' 

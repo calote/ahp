@@ -3,6 +3,7 @@
 export(AhpMatrix)
 export(Analyze)
 export(AnalyzeTable)
+export(AnalyzeTinytable)
 export(Calculate)
 export(GetGraph)
 export(Load)

@@ -3,6 +3,7 @@
 \name{Analyze}
 \alias{Analyze}
 \alias{AnalyzeTable}
+\alias{AnalyzeTinytable}
 \alias{PruneByCutoff}
 \alias{PruneLevels}
 \title{Analyze your AHP model}
@@ -24,6 +25,18 @@ AnalyzeTable(
   weightColor = "honeydew3",
   consistencyColor = "wheat2",
   alternativeColor = "thistle4"
+)
+
+AnalyzeTinytable(
+  ahpTree,
+  decisionMaker = "Total",
+  variable = c("weightContribution", "priority", "score"),
+  sort = c("priority", "totalPriority", "orig"),
+  pruneFun = function(node, decisionMaker) TRUE,
+  weightColor = "honeydew3",
+  consistencyColor = "wheat2",
+  alternativeColor = "thistle4",
+  fontsize = NULL
 )
 
 PruneByCutoff(node, decisionMaker, minWeight = 0)
@@ -49,6 +62,10 @@ argument. The default (\code{NULL}) returns the full AHP tree}
 
 \item{alternativeColor}{The name of the color used to highlight big contributors to alternative choices.}
 
+\item{fontsize}{Font size in em units for \code{AnalyzeTinytable}. Useful to
+fit wide tables on a Typst page (e.g. \code{0.8}). \code{NULL} keeps the
+default size.}
+
 \item{node}{the \code{Node}}
 
 \item{minWeight}{prunes the nodes whose weightContribution is smaller than the minWeight}
@@ -59,6 +76,11 @@ argument. The default (\code{NULL}) returns the full AHP tree}
 Analyze returns a \code{data.frame} containing the contribution of each criteria
 
 AnalyzeTable returns a \code{\link{formattable}} data.frame object which, in most environments, will be displayed as an HTML table
+
+AnalyzeTinytable returns a \code{\link[tinytable:tt]{tinytable}} object.
+Note that, unlike \code{AnalyzeTable}, no warning icon is shown
+for high inconsistency (only the background color); values are otherwise
+identical.
 
 the Prune methods must return \code{TRUE} for nodes to be kept, \code{FALSE} for nodes to be pruned
 }

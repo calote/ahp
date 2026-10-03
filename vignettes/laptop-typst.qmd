@@ -29,11 +29,22 @@ The Chromebook wins with a total weight of 44.7%, driven by Price
 $34.7\%$ (Price), $12.0\%$ (Battery, MacBook) and $10.6\%$
 (Ecosystem, MacBook).
 
-## The colored table as a figure
+## The colored table, natively in Typst
 
-`AnalyzeTable()` returns a `formattable` object, i.e. an HTML table.
-Typst cannot render HTML, so the table is screenshotted to PNG once
-(with `webshot2` and Chromium, see the "Choosing a laptop with AHP"
-vignette) and embedded here as a regular figure:
+`AnalyzeTable()` returns a `formattable` object, i.e. an HTML table, which
+Typst cannot render. `AnalyzeTinytable()` produces the same colored table
+as a `tinytable` object, rendered natively in each output format
+(HTML, LaTeX/PDF and Typst) — no screenshots needed:
 
-![Analysis table with color coding](laptop-table.png)
+```{r}
+AnalyzeTinytable(laptopAhp)
+```
+
+For wide tables that do not fit on a Typst page, shrink the font, e.g.
+`AnalyzeTinytable(carAhp, fontsize = 0.8)`. The only difference with
+`AnalyzeTable()` is that no warning icon is shown for high
+inconsistency (the background color is kept).
+
+The screenshot approach (capture the `formattable` table to PNG with
+`webshot2` and embed the image) remains available and is documented in
+the "Choosing a laptop with AHP" vignette.
