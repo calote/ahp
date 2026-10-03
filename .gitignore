@@ -5,3 +5,5 @@ inst/doc
 private
 vignettes/rsconnect
 .DS_Store
+*.tar.gz
+*.Rcheck/
