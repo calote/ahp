@@ -3,6 +3,10 @@
 ## Version 0.2.15 (GitHub, fork calote/ahp)
 - CHANGE: Pedro L. Luque takes over as maintainer
 - DOC: NEWS entries, README install and vignette references
+- FIX (issues #11, #13, PR by mestinso): consistency ratio now also
+  computed for MeanNormalization and GeometricMean priority methods
+- NOTE (issues #15, #19, #23): verified fixed - RI supports n > 8,
+  UTF-8 model files load, Visualize uses data.tree attributes API
 
 ## Version 0.2.14 (GitHub, fork calote/ahp)
 - ADD: AnalyzeTinytable() renders the colored analysis table natively in

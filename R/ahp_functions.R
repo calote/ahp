@@ -50,19 +50,38 @@ PrioritiesFromPairwiseMatrixEigenvalues <- function(mat, allowedConsistency = 1)
 #' @rdname PrioritiesFromPairwiseMatrixEigenvalues
 #' 
 #' @export
-PrioritiesFromPairwiseMatrixMeanNormalization <- function(mat) {
+PrioritiesFromPairwiseMatrixMeanNormalization <- function(mat, allowedConsistency = 1) {
+  # weighting vector
   priority <- rowMeans( mat / matrix(rep(colSums(mat), nrow(mat)), nrow = nrow(mat), byrow = TRUE))
-  list(priority = priority, consistency = NA)
+
+  #consistency (same estimate as for the other methods, see issues #11 and #13,
+  # with thanks to mestinso for the original pull request)
+  lambdaMax <- mean((mat %*% priority)/priority) # estimate
+  CI = (lambdaMax - dim(mat)[1]) / (dim(mat)[1]-1)
+  CR = CI / RI(dim(mat)[1])
+  CR <- max(CR, 0) #due to numerical inprecision
+  if (!(is.nan(CI) || CR < allowedConsistency)) priority <- (matrix(1/dim(mat)[1],1,dim(mat)[1]))
+  names(priority) <- dimnames(mat)[[1]]
+  list(priority = priority, consistency = CR)
 }
 
 
 #' @rdname PrioritiesFromPairwiseMatrixEigenvalues
 #' 
 #' @export
-PrioritiesFromPairwiseMatrixGeometricMean <- function(mat) {
+PrioritiesFromPairwiseMatrixGeometricMean <- function(mat, allowedConsistency = 1) {
   geometricMean <- apply(mat, MARGIN = 1, prod) ^ (1 / nrow(mat))
   priority <- geometricMean / sum(geometricMean)
-  list(priority = priority, consistency = NA)
+
+  #consistency (same estimate as for the other methods, see issues #11 and #13,
+  # with thanks to mestinso for the original pull request)
+  lambdaMax <- mean((mat %*% priority)/priority) # estimate
+  CI = (lambdaMax - dim(mat)[1]) / (dim(mat)[1]-1)
+  CR = CI / RI(dim(mat)[1])
+  CR <- max(CR, 0) #due to numerical inprecision
+  if (!(is.nan(CI) || CR < allowedConsistency)) priority <- (matrix(1/dim(mat)[1],1,dim(mat)[1]))
+  names(priority) <- dimnames(mat)[[1]]
+  list(priority = priority, consistency = CR)
 }
 
 

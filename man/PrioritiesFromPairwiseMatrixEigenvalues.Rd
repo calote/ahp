@@ -8,9 +8,9 @@
 \usage{
 PrioritiesFromPairwiseMatrixEigenvalues(mat, allowedConsistency = 1)
 
-PrioritiesFromPairwiseMatrixMeanNormalization(mat)
+PrioritiesFromPairwiseMatrixMeanNormalization(mat, allowedConsistency = 1)
 
-PrioritiesFromPairwiseMatrixGeometricMean(mat)
+PrioritiesFromPairwiseMatrixGeometricMean(mat, allowedConsistency = 1)
 }
 \arguments{
 \item{mat}{The AHP preference matrix}

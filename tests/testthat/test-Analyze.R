@@ -8,8 +8,8 @@ test_that("Analyze Identity", {
   Calculate(carAhp, pairwiseFun = PrioritiesFromPairwiseMatrixGeometricMean)
   df <- Analyze(carAhp)
   
-  expect_equal(ncol(df), 8)
-  expect_equal(names(df), c(" ", "Weight", "Odyssey", "Accord Sedan", "CR-V", "Element", "Accord Hybrid", "Pilot"))
+  expect_equal(ncol(df), 9)
+  expect_equal(names(df), c(" ", "Weight", "Odyssey", "Accord Sedan", "CR-V", "Element", "Accord Hybrid", "Pilot", "Inconsistency"))
   
 })
 
