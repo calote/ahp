@@ -1,0 +1,88 @@
+---
+title: "Choosing a laptop with AHP (and printing the results in Typst/PDF)"
+author: "ahp package"
+date: '`r Sys.Date()`'
+output:
+  rmarkdown::html_vignette:
+    toc: yes
+    toc_depth: 3
+vignette: >
+  %\VignetteIndexEntry{Choosing a laptop with AHP}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r set-options, echo=FALSE, cache=FALSE}
+options(width=120)
+knitr::opts_chunk$set(warning = FALSE)
+```
+
+## The decision problem
+
+A student has to choose a laptop for the next semester. Three candidates
+with very different profiles, traded off on three criteria:
+
+- **Price**: the cheaper, the better (derived automatically from the
+  `price` attribute of each alternative via a `pairwiseFunction`).
+- **Battery**: battery hours are directly comparable, so they are used
+  as `score`s via a `scoreFunction`.
+- **Ecosystem**: purely subjective pairwise preferences.
+
+This exercises the three preference styles of the package in a single,
+compact model (`laptop.ahp`, shipped in `inst/extdata`):
+
+```{r show-file}
+ahpFile <- system.file("extdata", "laptop.ahp", package="ahp")
+cat(readChar(ahpFile, file.info(ahpFile)$size))
+```
+
+## Load, calculate, analyze
+
+```{r run}
+library(ahp)
+laptopAhp <- Load(ahpFile)
+Calculate(laptopAhp)
+Analyze(laptopAhp)
+```
+
+The Chromebook wins (44.7%), driven by the Price criterion, which carries
+more than half of the total weight (54.0%). The same analysis as a
+color-coded HTML table:
+
+```{r table}
+AnalyzeTable(laptopAhp)
+```
+
+And as a decision tree with priorities and inconsistencies:
+
+```{r visualize}
+Visualize(laptopAhp)
+```
+
+## Printing the colored table in Typst/PDF
+
+`AnalyzeTable()` returns a `formattable` object: an HTML table with
+colors. Typst does not understand HTML, so the table cannot be rendered
+as text in a Quarto `format: typst` document. The working approach is
+to screenshot the table to PNG and embed the image:
+
+```{r export, eval=FALSE}
+w <- formattable::as.htmlwidget(AnalyzeTable(laptopAhp))
+htmlwidgets::saveWidget(w, "laptop-table.html", selfcontained = TRUE)
+webshot2::webshot("laptop-table.html", "laptop-table.png",
+                  selector = ".formattable_widget", delay = 1)
+```
+
+This needs a Chromium/Chrome installation (`webshot2` finds it
+automatically; otherwise set the `CHROME_PATH` environment variable).
+The old recipe based on `webshot` (PhantomJS) no longer works:
+PhantomJS has been abandoned since 2018, and `webshot::webshot()`
+fails silently without producing any image when it is missing.
+
+The resulting PNG embeds cleanly in a `.qmd` with `format: typst`:
+
+```markdown
+![Laptop choice: analysis table](laptop-table.png)
+```
+
+![Laptop choice: analysis table](laptop-table.png)

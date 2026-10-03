@@ -22,7 +22,9 @@ Suggests:
     shinythemes,
     shinyjs,
     htmltools,
-    webshot
+    webshot,
+    webshot2,
+    htmlwidgets
 Description: Model and analyse complex decision making problems
     using the Analytic Hierarchy Process (AHP) by Thomas Saaty.
 License: GPL (>= 2)

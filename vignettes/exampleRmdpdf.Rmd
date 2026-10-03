@@ -16,6 +16,12 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
 ---
 
+> **Note:** the `webshot` (PhantomJS) recipe below no longer produces an
+> image on systems without PhantomJS (abandoned since 2018; the call
+> fails silently). For a working recipe based on `webshot2`/Chromium
+> and how to embed the result in Quarto Typst/PDF, see the
+> "Choosing a laptop with AHP" vignette.
+
 
 ```{r set-options, echo=FALSE, cache=FALSE}
 options(width=120)
