@@ -48,3 +48,22 @@ inconsistency (the background color is kept).
 The screenshot approach (capture the `formattable` table to PNG with
 `webshot2` and embed the image) remains available and is documented in
 the "Choosing a laptop with AHP" vignette.
+
+## The decision tree as a figure
+
+`Visualize()` returns a DiagrammeR `grViz` widget (interactive HTML),
+which Typst cannot render either: used live, knitr prints a
+"PhantomJS not found" message and embeds a cropped, partial image.
+Screenshot it once and embed the PNG:
+
+```{r export-tree, eval=FALSE}
+htmlwidgets::saveWidget(Visualize(laptopAhp), "laptop-tree.html",
+                        selfcontained = TRUE)
+webshot2::webshot("laptop-tree.html", "laptop-tree.png",
+                  selector = ".grViz", delay = 3)
+```
+
+The `selector = ".grViz"` crops tightly to the tree (no whitespace) and
+`delay = 3` lets viz.js finish drawing before the capture:
+
+![Decision tree](laptop-tree.png)
