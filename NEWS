@@ -1,5 +1,9 @@
 # All changes to ahp are documented here.
 
+## Version 0.2.15 (GitHub, fork calote/ahp)
+- CHANGE: Pedro L. Luque takes over as maintainer
+- DOC: NEWS entries, README install and vignette references
+
 ## Version 0.2.14 (GitHub, fork calote/ahp)
 - ADD: AnalyzeTinytable() renders the colored analysis table natively in
   HTML, LaTeX/PDF and Typst (tinytable), no screenshots needed
