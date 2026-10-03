@@ -28,6 +28,30 @@ For more information, see the package vignette using `vignette("AHP car example"
 
 There is also a Shiny app that complements that package. You can try it out at http://ipub.com/apps/ahp/
 
+# Installation
+
+The package is pure R and installs on Windows, macOS and Linux with no
+system requirements:
+
+```{code = R}
+remotes::install_github("calote/ahp")
+```
+
+Building the vignettes from source additionally needs the
+[Quarto CLI](https://quarto.org/docs/get-started/) installed on your
+system (one vignette is a `.qmd` rendered to PDF via Typst, which is
+bundled with Quarto, so no LaTeX is needed):
+
+```{code = R}
+remotes::install_github("calote/ahp", build_vignettes = TRUE)
+```
+
+Without the Quarto CLI, install skipping the vignettes:
+
+```{code = R}
+remotes::install_github("calote/ahp", build_vignettes = FALSE)
+```
+
 # Example
 
 ```{code = R} 
