@@ -13,16 +13,16 @@ Imports:
     yaml,
     formattable,
     DiagrammeR,
-    shiny,
+    shiny
+Suggests:
+    testthat,
+    knitr,
+    rmarkdown,
     shinyAce,
     shinythemes,
     shinyjs,
     htmltools,
     webshot
-Suggests:
-    testthat,
-    knitr,
-    rmarkdown
 Description: Model and analyse complex decision making problems
     using the Analytic Hierarchy Process (AHP) by Thomas Saaty.
 License: GPL (>= 2)

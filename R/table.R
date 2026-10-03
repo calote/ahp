@@ -67,7 +67,12 @@ AnalyzeTable <- function(ahpTree,
   
   
   
-  formattable(df[ , -2], formatters = myFormatters)
+  # NOTE: pass myFormatters positionally (unnamed), not as `formatters =`.
+  # formattable stores ... verbatim in attr(x, "formattable")$format, and its
+  # knit_print does `format$format`, which partially matches an element named
+  # "formatters" and breaks with 'length > 1 in coercion to logical(1)' on
+  # modern R. The rendered HTML is identical either way.
+  formattable(df[ , -2], myFormatters)
 
 }
 

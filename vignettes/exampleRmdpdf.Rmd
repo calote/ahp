@@ -21,7 +21,6 @@ vignette: >
 options(width=120)
 #opts_chunk$set(comment = "", warning = FALSE, message = FALSE, echo = TRUE, tidy = FALSE, size="small")
 knitr::opts_chunk$set(warning = FALSE)
-#read_chunk("some/script/I/want/to/load.R")
 ```
 
 

@@ -32,13 +32,7 @@ test_that("row sum", {
 
 
 test_that("alternatives order", {
-  aw <-  df[1 , 3:8] 
-  expect_equal(aw, sort(aw, decreasing = TRUE))
-})
-
-
-test_that("alternatives order", {
-  aw <-  df[1 , 3:8] 
+  aw <-  as.numeric(df[1 , 3:8])
   expect_equal(aw, sort(aw, decreasing = TRUE))
 })
 
