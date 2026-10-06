@@ -7,7 +7,7 @@ output:
     toc: yes
     toc_depth: 3
 vignette: >
-  %\VignetteIndexEntry{Choosing a laptop with AHP}
+  %\VignetteIndexEntry{Choosing a laptop with AHP (and printing the results in Typst/PDF)}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
