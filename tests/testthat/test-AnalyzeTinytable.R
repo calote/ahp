@@ -38,7 +38,19 @@ test_that("tinytable renders to html and typst", {
   expect_true(file.size(y) > 0)
 })
 
-test_that("tinytable score variable", {
+test_that("tinytable priority and score variables", {
+  testthat::skip_if_not_installed("tinytable")
+  ahpFile <- system.file("extdata", "car.ahp", package="ahp")
+  carAhp <- Load(ahpFile)
+  Calculate(carAhp)
+  for (v in c("weightContribution", "priority", "score")) {
+    t <- AnalyzeTinytable(carAhp, variable = v)
+    expect_true(inherits(t, "tinytable"))
+    expect_true(nrow(t@data) > 0)
+  }
+})
+
+test_that("tinytable score variable on vacation", {
   testthat::skip_if_not_installed("tinytable")
   ahpFile <- system.file("extdata", "vacation.ahp", package="ahp")
   vacationAhp <- Load(ahpFile)

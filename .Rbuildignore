@@ -3,6 +3,7 @@
 ^\.travis\.yml$
 ^appveyor\.yml$
 vignettes/rsconnect
+vignettes/.quarto
 www
 cran-comments.md
 README.md

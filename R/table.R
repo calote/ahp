@@ -128,10 +128,15 @@ AnalyzeTinytable <- function(ahpTree,
   names(df)[1] <- " "
   disp <- df[ , -2]
 
+  # NOTE: the weight column is called "Weight" or "Priority" depending on
+  # `variable` (AnalyzeTable uses it positionally as well). Never assume
+  # df$Weight exists: with variable = "priority" it is NULL.
+  weightCol <- colnames(df)[3]
   numcols <- setdiff(names(disp), " ")
-  bg <- cbind(Weight = formattable::csscolor(formattable::gradient(df$Weight, "white", weightColor)),
+  bg <- cbind(formattable::csscolor(formattable::gradient(df[[weightCol]], "white", weightColor)),
               cols[ , alternatives, drop = FALSE],
               Inconsistency = formattable::csscolor(formattable::gradient(pmin(df$Inconsistency, 0.1), "white", consistencyColor)))
+  colnames(bg)[1] <- weightCol
   bg <- bg[ , numcols, drop = FALSE]
 
   # NOTE: tinytable's `background` only accepts a single color per style_tt()
