@@ -84,6 +84,11 @@ AnalyzeTable <- function(ahpTree,
 #' @param fontsize Font size in em units, passed to
 #'   \code{\link[tinytable:style_tt]{style_tt}}. Useful to fit wide tables on
 #'   a Typst page (e.g. \code{0.8}). \code{NULL} keeps the default size.
+#' @param na_replace Text shown in place of missing values. Defaults to
+#'   \code{""} (empty cells). Use e.g. \code{"-"} or \code{"NA"} for an
+#'   explicit marker. \code{NULL} is treated as the default (\code{""}).
+#'   (Implemented in the display formatting itself, not via
+#'   \code{format_tt(replace)}, which never sees the values.)
 #' @return AnalyzeTableTiny returns a \code{\link[tinytable:tt]{tinytable}}
 #'   object. Note that, unlike \code{AnalyzeTable}, no warning icon is shown
 #'   for high inconsistency (only the background color); values are otherwise
@@ -99,7 +104,8 @@ AnalyzeTableTiny <- function(ahpTree,
                              weightColor = "honeydew3",
                              consistencyColor = "wheat2",
                              alternativeColor = "thistle4",
-                             fontsize = NULL) {
+                             fontsize = NULL,
+                             na_replace = "") {
 
   if (!requireNamespace("tinytable", quietly = TRUE)) {
     stop("Package 'tinytable' is required for AnalyzeTableTiny(). Please install it with install.packages(\"tinytable\").")
@@ -143,8 +149,9 @@ AnalyzeTableTiny <- function(ahpTree,
   # call (a vector fails at render time), so background colors are applied
   # cell by cell. `background` must also be the last style applied: any later
   # style_tt() call with selectors re-validates the stored backgrounds.
-  if (variable[1] == "score") fmt <- function(x) ifelse(is.na(x), "NA", as.character(x))
-  else fmt <- function(x) ifelse(is.na(x), "NA", sprintf("%.1f%%", 100*x))
+  if (is.null(na_replace)) na_replace <- ""
+  if (variable[1] == "score") fmt <- function(x) ifelse(is.na(x), na_replace, as.character(x))
+  else fmt <- function(x) ifelse(is.na(x), na_replace, sprintf("%.1f%%", 100*x))
   disp[ , numcols] <- lapply(disp[ , numcols], fmt)
 
   t <- tinytable::tt(disp, width = 1)

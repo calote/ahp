@@ -36,7 +36,8 @@ AnalyzeTableTiny(
   weightColor = "honeydew3",
   consistencyColor = "wheat2",
   alternativeColor = "thistle4",
-  fontsize = NULL
+  fontsize = NULL,
+  na_replace = ""
 )
 
 PruneByCutoff(node, decisionMaker, minWeight = 0)
@@ -65,6 +66,10 @@ argument. The default (\code{NULL}) returns the full AHP tree}
 \item{fontsize}{Font size in em units for \code{AnalyzeTableTiny}. Useful to
 fit wide tables on a Typst page (e.g. \code{0.8}). \code{NULL} keeps the
 default size.}
+
+\item{na_replace}{Text shown in place of missing values in
+\code{AnalyzeTableTiny}. Defaults to \code{""} (empty cells).
+\code{NULL} is treated as the default.}
 
 \item{node}{the \code{Node}}
 
