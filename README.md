@@ -37,16 +37,27 @@ system requirements:
 remotes::install_github("calote/ahp")
 ```
 
-Building the vignettes from source additionally needs the
+To also build the vignettes from source you need the
 [Quarto CLI](https://quarto.org/docs/get-started/) installed on your
 system (one vignette is a `.qmd` rendered to PDF via Typst, which is
-bundled with Quarto, so no LaTeX is needed):
+bundled with Quarto, so no LaTeX is needed). The recipe below works on
+all operating systems (tested on Linux, macOS and Windows):
 
 ```{code = R}
-remotes::install_github("calote/ahp", build_vignettes = TRUE)
+install.packages("quarto")   # R package (pulls the rest in)
+# 1. Install WITHOUT vignettes, so the package lands in the default library
+remotes::install_github("calote/ahp", build_vignettes = FALSE)
+# 2. Reinstall WITH vignettes: Quarto already finds ahp in the library
+remotes::install_github("calote/ahp", build_vignettes = TRUE, force = TRUE)
 ```
 
-Without the Quarto CLI, install skipping the vignettes:
+Step 1 first matters on Windows: during `R CMD build`, the Quarto
+subprocess cannot see the temporary library where the package is staged
+([quarto-r issue #217](https://github.com/quarto-dev/quarto-r/issues/217)),
+so building the `.qmd` vignette fails on a fresh machine. Installing
+without vignettes first puts `ahp` in the default library, and the
+second pass finds it there. Without the Quarto CLI, install skipping
+the vignettes:
 
 ```{code = R}
 remotes::install_github("calote/ahp", build_vignettes = FALSE)
