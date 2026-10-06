@@ -32,16 +32,16 @@ $34.7\%$ (Price), $12.0\%$ (Battery, MacBook) and $10.6\%$
 ## The colored table, natively in Typst
 
 `AnalyzeTable()` returns a `formattable` object, i.e. an HTML table, which
-Typst cannot render. `AnalyzeTinytable()` produces the same colored table
+Typst cannot render. `AnalyzeTableTiny()` produces the same colored table
 as a `tinytable` object, rendered natively in each output format
 (HTML, LaTeX/PDF and Typst) — no screenshots needed:
 
 ```{r}
-AnalyzeTinytable(laptopAhp)
+AnalyzeTableTiny(laptopAhp)
 ```
 
 For wide tables that do not fit on a Typst page, shrink the font, e.g.
-`AnalyzeTinytable(carAhp, fontsize = 0.8)`. The only difference with
+`AnalyzeTableTiny(carAhp, fontsize = 0.8)`. The only difference with
 `AnalyzeTable()` is that no warning icon is shown for high
 inconsistency (the background color is kept).
 

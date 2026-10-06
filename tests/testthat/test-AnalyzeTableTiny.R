@@ -3,7 +3,7 @@ test_that("tinytable class", {
   ahpFile <- system.file("extdata", "car.ahp", package="ahp")
   carAhp <- Load(ahpFile)
   Calculate(carAhp)
-  t <- AnalyzeTinytable(carAhp)
+  t <- AnalyzeTableTiny(carAhp)
   expect_true(inherits(t, "tinytable"))
 })
 
@@ -13,7 +13,7 @@ test_that("tinytable values match Analyze", {
   carAhp <- Load(ahpFile)
   Calculate(carAhp)
   df <- Analyze(carAhp)
-  t <- AnalyzeTinytable(carAhp)
+  t <- AnalyzeTableTiny(carAhp)
   tdf <- t@data
   expect_equal(nrow(tdf), nrow(df))
   expect_equal(names(tdf), names(df))
@@ -29,7 +29,7 @@ test_that("tinytable renders to html and typst", {
   ahpFile <- system.file("extdata", "laptop.ahp", package="ahp")
   lp <- Load(ahpFile)
   Calculate(lp)
-  t <- AnalyzeTinytable(lp, fontsize = 0.8)
+  t <- AnalyzeTableTiny(lp, fontsize = 0.8)
   h <- tempfile(fileext = ".html")
   y <- tempfile(fileext = ".typ")
   expect_no_error(tinytable::save_tt(t, h, overwrite = TRUE))
@@ -44,7 +44,7 @@ test_that("tinytable priority and score variables", {
   carAhp <- Load(ahpFile)
   Calculate(carAhp)
   for (v in c("weightContribution", "priority", "score")) {
-    t <- AnalyzeTinytable(carAhp, variable = v)
+    t <- AnalyzeTableTiny(carAhp, variable = v)
     expect_true(inherits(t, "tinytable"))
     expect_true(nrow(t@data) > 0)
   }
@@ -55,6 +55,6 @@ test_that("tinytable score variable on vacation", {
   ahpFile <- system.file("extdata", "vacation.ahp", package="ahp")
   vacationAhp <- Load(ahpFile)
   Calculate(vacationAhp)
-  t <- AnalyzeTinytable(vacationAhp, decisionMaker = "Kid", variable = "score")
+  t <- AnalyzeTableTiny(vacationAhp, decisionMaker = "Kid", variable = "score")
   expect_true(inherits(t, "tinytable"))
 })

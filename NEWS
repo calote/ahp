@@ -9,7 +9,7 @@
   UTF-8 model files load, Visualize uses data.tree attributes API
 
 ## Version 0.2.14 (GitHub, fork calote/ahp)
-- ADD: AnalyzeTinytable() renders the colored analysis table natively in
+- ADD: AnalyzeTableTiny() renders the colored analysis table natively in
   HTML, LaTeX/PDF and Typst (tinytable), no screenshots needed
 - ADD: laptop.ahp example and "Choosing a laptop with AHP" vignette
 - ADD: "Laptop choice as a Typst PDF vignette" (.qmd, quarto::format engine)

@@ -3,7 +3,7 @@
 \name{Analyze}
 \alias{Analyze}
 \alias{AnalyzeTable}
-\alias{AnalyzeTinytable}
+\alias{AnalyzeTableTiny}
 \alias{PruneByCutoff}
 \alias{PruneLevels}
 \title{Analyze your AHP model}
@@ -27,7 +27,7 @@ AnalyzeTable(
   alternativeColor = "thistle4"
 )
 
-AnalyzeTinytable(
+AnalyzeTableTiny(
   ahpTree,
   decisionMaker = "Total",
   variable = c("weightContribution", "priority", "score"),
@@ -62,7 +62,7 @@ argument. The default (\code{NULL}) returns the full AHP tree}
 
 \item{alternativeColor}{The name of the color used to highlight big contributors to alternative choices.}
 
-\item{fontsize}{Font size in em units for \code{AnalyzeTinytable}. Useful to
+\item{fontsize}{Font size in em units for \code{AnalyzeTableTiny}. Useful to
 fit wide tables on a Typst page (e.g. \code{0.8}). \code{NULL} keeps the
 default size.}
 
@@ -77,7 +77,7 @@ Analyze returns a \code{data.frame} containing the contribution of each criteria
 
 AnalyzeTable returns a \code{\link{formattable}} data.frame object which, in most environments, will be displayed as an HTML table
 
-AnalyzeTinytable returns a \code{\link[tinytable:tt]{tinytable}} object.
+AnalyzeTableTiny returns a \code{\link[tinytable:tt]{tinytable}} object.
 Note that, unlike \code{AnalyzeTable}, no warning icon is shown
 for high inconsistency (only the background color); values are otherwise
 identical.

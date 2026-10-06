@@ -84,14 +84,14 @@ AnalyzeTable <- function(ahpTree,
 #' @param fontsize Font size in em units, passed to
 #'   \code{\link[tinytable:style_tt]{style_tt}}. Useful to fit wide tables on
 #'   a Typst page (e.g. \code{0.8}). \code{NULL} keeps the default size.
-#' @return AnalyzeTinytable returns a \code{\link[tinytable:tt]{tinytable}}
+#' @return AnalyzeTableTiny returns a \code{\link[tinytable:tt]{tinytable}}
 #'   object. Note that, unlike \code{AnalyzeTable}, no warning icon is shown
 #'   for high inconsistency (only the background color); values are otherwise
 #'   identical.
 #'
 #' @rdname Analyze
 #' @export
-AnalyzeTinytable <- function(ahpTree,
+AnalyzeTableTiny <- function(ahpTree,
                              decisionMaker = "Total",
                              variable = c("weightContribution", "priority", "score"),
                              sort = c("priority", "totalPriority", "orig"),
@@ -102,7 +102,7 @@ AnalyzeTinytable <- function(ahpTree,
                              fontsize = NULL) {
 
   if (!requireNamespace("tinytable", quietly = TRUE)) {
-    stop("Package 'tinytable' is required for AnalyzeTinytable(). Please install it with install.packages(\"tinytable\").")
+    stop("Package 'tinytable' is required for AnalyzeTableTiny(). Please install it with install.packages(\"tinytable\").")
   }
 
   df <- GetDataFrame(ahpTree = ahpTree,
