@@ -39,7 +39,8 @@ AnalyzeTableTiny(
   fontsize = NULL,
   na_replace = "",
   width = NULL,
-  names_fontsize = NULL
+  names_fontsize = NULL,
+  style = c("pill", "fill")
 )
 
 PruneByCutoff(node, decisionMaker, minWeight = 0)
@@ -81,6 +82,12 @@ numeric vector with one proportion per column.}
 \item{names_fontsize}{Font size in em units for the names column only
 of \code{AnalyzeTableTiny}, useful when names are very long.
 \code{NULL} keeps the table size.}
+
+\item{style}{Display style of colored cells in
+\code{AnalyzeTableTiny}: \code{"pill"} (the default) wraps values in
+inset rounded boxes like \code{AnalyzeTable}, in HTML and Typst output;
+\code{"fill"} paints the whole cell. LaTeX output always uses
+full-cell backgrounds.}
 
 \item{node}{the \code{Node}}
 

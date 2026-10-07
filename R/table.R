@@ -95,6 +95,10 @@ AnalyzeTable <- function(ahpTree,
 #'   vector with one proportion per column.
 #' @param names_fontsize Font size in em units for the names column only,
 #'   useful when names are very long. \code{NULL} keeps the table size.
+#' @param style Display style of colored cells: \code{"pill"} (the default)
+#'   wraps values in inset rounded boxes like \code{AnalyzeTable}, in HTML
+#'   and Typst output; \code{"fill"} paints the whole cell. LaTeX output
+#'   always uses full-cell backgrounds.
 #' @return AnalyzeTableTiny returns a \code{\link[tinytable:tt]{tinytable}}
 #'   object. Note that, unlike \code{AnalyzeTable}, no warning icon is shown
 #'   for high inconsistency (only the background color); values are otherwise
@@ -113,7 +117,10 @@ AnalyzeTableTiny <- function(ahpTree,
                              fontsize = NULL,
                              na_replace = "",
                              width = NULL,
-                             names_fontsize = NULL) {
+                             names_fontsize = NULL,
+                             style = c("pill", "fill")) {
+
+  style <- match.arg(style)
 
   if (!requireNamespace("tinytable", quietly = TRUE)) {
     stop("Package 'tinytable' is required for AnalyzeTableTiny(). Please install it with install.packages(\"tinytable\").")
@@ -168,6 +175,23 @@ AnalyzeTableTiny <- function(ahpTree,
   disp[ , numcols] <- lapply(disp[ , numcols], fmt)
 
   t <- tinytable::tt(disp, width = width)
+  if (style == "pill") {
+    # NOTE: inset rounded boxes like AnalyzeTable, per output format.
+    # Full-cell backgrounds are kept for LaTeX only (see below).
+    for (col in numcols) {
+      cc <- bg[ , col]
+      mask <- !is.na(df[[col]])
+      pill_html <- local({cc0 <- cc; m0 <- mask; function(x) {
+        ifelse(m0, sprintf(paste0("<span style=\"display: block; background: %s;",
+                                  " border-radius: 4px; padding: 0 4px;\">%s</span>"), cc0, x), x)
+      }})
+      pill_typst <- local({cc0 <- cc; m0 <- mask; function(x) {
+        ifelse(m0, sprintf("#box(fill: rgb(\"%s\"), radius: 4pt, inset: (x: 6pt, y: 3pt))[%s]", cc0, x), x)
+      }})
+      t <- tinytable::format_tt(t, j = col, fn = pill_html, output = "html")
+      t <- tinytable::format_tt(t, j = col, fn = pill_typst, output = "typst")
+    }
+  }
   if (!is.null(fontsize)) t <- tinytable::style_tt(t, fontsize = fontsize)
   t <- tinytable::style_tt(t, j = 1, bold = TRUE)
   # NOTE: fine light-gray rules under each row, like AnalyzeTable. The
@@ -181,7 +205,12 @@ AnalyzeTableTiny <- function(ahpTree,
   t <- tinytable::style_tt(t, j = numcols, align = "r")
   for (i in seq_len(nrow(disp))) t <- tinytable::style_tt(t, i = i, j = 1, indent = displevel[i]-1)
   for (j in seq_len(ncol(bg))) for (i in seq_len(nrow(bg))) {
-    t <- tinytable::style_tt(t, i = i, j = match(colnames(bg)[j], names(disp)), background = bg[i, j])
+    if (style == "pill") {
+      t <- tinytable::style_tt(t, i = i, j = match(colnames(bg)[j], names(disp)),
+                               background = bg[i, j], output = "latex")
+    } else {
+      t <- tinytable::style_tt(t, i = i, j = match(colnames(bg)[j], names(disp)), background = bg[i, j])
+    }
   }
 
   t

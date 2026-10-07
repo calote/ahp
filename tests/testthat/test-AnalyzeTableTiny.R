@@ -110,3 +110,23 @@ test_that("tinytable NA cells have white background", {
   }
   expect_true(hit)
 })
+
+test_that("tinytable pill style wraps values", {
+  testthat::skip_if_not_installed("tinytable")
+  m2 <- Load(system.file("extdata", "ejmultinivel.ahp", package="ahp"))
+  Calculate(m2)
+  t_pill <- AnalyzeTableTiny(m2)
+  t_fill <- AnalyzeTableTiny(m2, style = "fill")
+  h_pill <- tempfile(fileext = ".html")
+  y_pill <- tempfile(fileext = ".typ")
+  h_fill <- tempfile(fileext = ".html")
+  tinytable::save_tt(t_pill, h_pill, overwrite = TRUE)
+  tinytable::save_tt(t_pill, y_pill, overwrite = TRUE)
+  tinytable::save_tt(t_fill, h_fill, overwrite = TRUE)
+  html_pill <- paste(readLines(h_pill, warn = FALSE), collapse = "\n")
+  typ_pill <- paste(readLines(y_pill, warn = FALSE), collapse = "\n")
+  html_fill <- paste(readLines(h_fill, warn = FALSE), collapse = "\n")
+  expect_true(grepl("<span", html_pill, fixed = TRUE))
+  expect_true(grepl("#box(fill", typ_pill, fixed = TRUE))
+  expect_false(grepl("<span", html_fill, fixed = TRUE))
+})
