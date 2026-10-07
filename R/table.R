@@ -170,6 +170,13 @@ AnalyzeTableTiny <- function(ahpTree,
   t <- tinytable::tt(disp, width = width)
   if (!is.null(fontsize)) t <- tinytable::style_tt(t, fontsize = fontsize)
   t <- tinytable::style_tt(t, j = 1, bold = TRUE)
+  # NOTE: fine light-gray rules under each row, like AnalyzeTable. The
+  # native `line` style covers Typst/LaTeX; HTML needs its own CSS rule
+  # (per-cell line styles are not rendered there). Lines go before the
+  # cell backgrounds (see NOTE below).
+  t <- tinytable::style_tt(t, i = seq_len(nrow(disp)),
+                           line = "b", line_color = "#DDDDDD", line_width = 0.05)
+  t <- tinytable::theme_html(t, css_rule = "tbody td { border-bottom: 1px solid #DDDDDD; }")
   if (!is.null(names_fontsize)) t <- tinytable::style_tt(t, j = 1, fontsize = names_fontsize)
   t <- tinytable::style_tt(t, j = numcols, align = "r")
   for (i in seq_len(nrow(disp))) t <- tinytable::style_tt(t, i = i, j = 1, indent = displevel[i]-1)
