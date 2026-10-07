@@ -1,0 +1,58 @@
+Version: 2.0
+Alternatives: &alternatives
+  Sr-Gonzalez:
+  Sra-Perez:
+  Sr-Fernandez:
+Goal:
+  name: Elegir el mejor Gerente
+  preferences:
+    pairwise:
+      - [ExperienciaLaboral, Educacion, 3]
+      - [ExperienciaLaboral, CaracteristicasPersonales, 1]
+      - [Educacion, CaracteristicasPersonales, 1/3]
+  children:
+    ExperienciaLaboral:
+      preferences:
+        pairwise:
+          - [Sr-Gonzalez,Sra-Perez,3]
+          - [Sr-Gonzalez,Sr-Fernandez,1/3]
+          - [Sra-Perez,Sr-Fernandez,1/7]
+      children: *alternatives
+    Educacion:
+      preferences:
+        pairwise:
+          - [EducacionFormal,CursoCapacitacion,3]
+      children:
+        EducacionFormal:
+          preferences:
+            pairwise:
+              - [Sr-Gonzalez,Sra-Perez,1/5]
+              - [Sr-Gonzalez,Sr-Fernandez,1/3]
+              - [Sra-Perez,Sr-Fernandez,3]
+          children: *alternatives
+        CursoCapacitacion:
+          preferences:
+            pairwise:
+              - [Sr-Gonzalez,Sra-Perez,5]
+              - [Sr-Gonzalez,Sr-Fernandez,3]
+              - [Sra-Perez,Sr-Fernandez,1/2]
+          children: *alternatives
+    CaracteristicasPersonales:
+      preferences:
+        pairwise:
+          - [ResultadoEntrevista,ResultadoPruebaPsicologica,2]
+      children:
+        ResultadoEntrevista:
+          preferences:
+            pairwise:
+              - [Sr-Gonzalez,Sra-Perez,3]
+              - [Sr-Gonzalez,Sr-Fernandez,1]
+              - [Sra-Perez,Sr-Fernandez,1/3]
+          children: *alternatives
+        ResultadoPruebaPsicologica:
+          preferences:
+            pairwise:
+              - [Sr-Gonzalez,Sra-Perez,3]
+              - [Sr-Gonzalez,Sr-Fernandez,6]
+              - [Sra-Perez,Sr-Fernandez,3]
+          children: *alternatives

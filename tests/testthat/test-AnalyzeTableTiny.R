@@ -76,3 +76,17 @@ test_that("tinytable na_replace", {
   expect_true(has_empty_cell(t_null))
   expect_true(has_dash_cell(t_dash))
 })
+
+test_that("tinytable width and names_fontsize", {
+  testthat::skip_if_not_installed("tinytable")
+  m2 <- Load(system.file("extdata", "ejmultinivel.ahp", package="ahp"))
+  Calculate(m2)
+  t_auto <- AnalyzeTableTiny(m2)
+  t_wide <- AnalyzeTableTiny(m2, width = 1)
+  t_small <- AnalyzeTableTiny(m2, names_fontsize = 0.7)
+  expect_true(all(vapply(list(t_auto, t_wide, t_small),
+                         function(t) inherits(t, "tinytable"), logical(1))))
+  y <- tempfile(fileext = ".typ")
+  expect_no_error(tinytable::save_tt(t_auto, y, overwrite = TRUE))
+  expect_true(file.size(y) > 0)
+})

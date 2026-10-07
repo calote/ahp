@@ -37,7 +37,9 @@ AnalyzeTableTiny(
   consistencyColor = "wheat2",
   alternativeColor = "thistle4",
   fontsize = NULL,
-  na_replace = ""
+  na_replace = "",
+  width = NULL,
+  names_fontsize = NULL
 )
 
 PruneByCutoff(node, decisionMaker, minWeight = 0)
@@ -70,6 +72,15 @@ default size.}
 \item{na_replace}{Text shown in place of missing values in
 \code{AnalyzeTableTiny}. Defaults to \code{""} (empty cells).
 \code{NULL} is treated as the default.}
+
+\item{width}{Table width for \code{AnalyzeTableTiny}, passed to
+\code{tt()}. The default \code{NULL} sizes the table to its content,
+which fits long names best. Use \code{1} for full line width, or a
+numeric vector with one proportion per column.}
+
+\item{names_fontsize}{Font size in em units for the names column only
+of \code{AnalyzeTableTiny}, useful when names are very long.
+\code{NULL} keeps the table size.}
 
 \item{node}{the \code{Node}}
 

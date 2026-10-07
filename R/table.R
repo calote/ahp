@@ -89,6 +89,12 @@ AnalyzeTable <- function(ahpTree,
 #'   explicit marker. \code{NULL} is treated as the default (\code{""}).
 #'   (Implemented in the display formatting itself, not via
 #'   \code{format_tt(replace)}, which never sees the values.)
+#' @param width Table width, passed to \code{\link[tinytable:tt]{tt}}. The
+#'   default \code{NULL} lets the table size itself to its content, which
+#'   fits long names best. Use \code{1} for full line width, or a numeric
+#'   vector with one proportion per column.
+#' @param names_fontsize Font size in em units for the names column only,
+#'   useful when names are very long. \code{NULL} keeps the table size.
 #' @return AnalyzeTableTiny returns a \code{\link[tinytable:tt]{tinytable}}
 #'   object. Note that, unlike \code{AnalyzeTable}, no warning icon is shown
 #'   for high inconsistency (only the background color); values are otherwise
@@ -105,7 +111,9 @@ AnalyzeTableTiny <- function(ahpTree,
                              consistencyColor = "wheat2",
                              alternativeColor = "thistle4",
                              fontsize = NULL,
-                             na_replace = "") {
+                             na_replace = "",
+                             width = NULL,
+                             names_fontsize = NULL) {
 
   if (!requireNamespace("tinytable", quietly = TRUE)) {
     stop("Package 'tinytable' is required for AnalyzeTableTiny(). Please install it with install.packages(\"tinytable\").")
@@ -154,9 +162,10 @@ AnalyzeTableTiny <- function(ahpTree,
   else fmt <- function(x) ifelse(is.na(x), na_replace, sprintf("%.1f%%", 100*x))
   disp[ , numcols] <- lapply(disp[ , numcols], fmt)
 
-  t <- tinytable::tt(disp, width = 1)
+  t <- tinytable::tt(disp, width = width)
   if (!is.null(fontsize)) t <- tinytable::style_tt(t, fontsize = fontsize)
   t <- tinytable::style_tt(t, j = 1, bold = TRUE)
+  if (!is.null(names_fontsize)) t <- tinytable::style_tt(t, j = 1, fontsize = names_fontsize)
   t <- tinytable::style_tt(t, j = numcols, align = "r")
   for (i in seq_len(nrow(disp))) t <- tinytable::style_tt(t, i = i, j = 1, indent = displevel[i]-1)
   for (j in seq_len(ncol(bg))) for (i in seq_len(nrow(bg))) {

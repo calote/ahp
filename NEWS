@@ -4,6 +4,8 @@
 - CHANGE: Pedro L. Luque takes over as maintainer
 - DOC: NEWS entries, README install and vignette references
 - ADD: AnalyzeTableTiny() gains na_replace (default "" for missing values)
+- ADD: AnalyzeTableTiny() gains width (default auto-sizing for long names)
+  and names_fontsize for the names column only
 - FIX (issues #11, #13, PR by mestinso): consistency ratio now also
   computed for MeanNormalization and GeometricMean priority methods
 - NOTE (issues #15, #19, #23): verified fixed - RI supports n > 8,
