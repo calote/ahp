@@ -153,6 +153,11 @@ AnalyzeTableTiny <- function(ahpTree,
   colnames(bg)[1] <- weightCol
   bg <- bg[ , numcols, drop = FALSE]
 
+  # NOTE: gradient() extends the darkest color to missing values, so NA
+  # cells would get a strong background. Force them to white, whatever
+  # na_replace displays in them.
+  for (col in numcols) bg[is.na(df[[col]]), col] <- "white"
+
   # NOTE: tinytable's `background` only accepts a single color per style_tt()
   # call (a vector fails at render time), so background colors are applied
   # cell by cell. `background` must also be the last style applied: any later

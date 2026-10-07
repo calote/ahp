@@ -90,3 +90,23 @@ test_that("tinytable width and names_fontsize", {
   expect_no_error(tinytable::save_tt(t_auto, y, overwrite = TRUE))
   expect_true(file.size(y) > 0)
 })
+
+test_that("tinytable NA cells have white background", {
+  testthat::skip_if_not_installed("tinytable")
+  lp <- Load(system.file("extdata", "laptop.ahp", package="ahp"))
+  Calculate(lp)
+  df <- Analyze(lp)
+  na_row <- which(is.na(df$Inconsistency))
+  expect_true(length(na_row) > 0)  # the fixture really has a missing value
+  t <- AnalyzeTableTiny(lp)
+  j_incon <- match("Inconsistency", names(t@data))
+  hit <- FALSE
+  for (k in seq_along(t@lazy_style)) {
+    cl <- t@lazy_style[[k]]
+    if ("background" %in% names(cl) &&
+        isTRUE(eval(cl$i) == na_row) &&
+        isTRUE(eval(cl$j) == j_incon) &&
+        identical(unname(eval(cl$background)), "white")) hit <- TRUE
+  }
+  expect_true(hit)
+})
