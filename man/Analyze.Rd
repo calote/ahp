@@ -86,8 +86,9 @@ of \code{AnalyzeTableTiny}, useful when names are very long.
 \item{style}{Display style of colored cells in
 \code{AnalyzeTableTiny}: \code{"pill"} (the default) wraps values in
 inset rounded boxes like \code{AnalyzeTable}, in HTML and Typst output;
-\code{"fill"} paints the whole cell. LaTeX output always uses
-full-cell backgrounds.}
+\code{"fill"} paints the whole cell. LaTeX output has no pill support:
+it shows plain values with \code{"pill"} and full-cell backgrounds
+with \code{"fill"}.}
 
 \item{node}{the \code{Node}}
 

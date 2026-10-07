@@ -98,7 +98,8 @@ AnalyzeTable <- function(ahpTree,
 #' @param style Display style of colored cells: \code{"pill"} (the default)
 #'   wraps values in inset rounded boxes like \code{AnalyzeTable}, in HTML
 #'   and Typst output; \code{"fill"} paints the whole cell. LaTeX output
-#'   always uses full-cell backgrounds.
+#'   has no pill support: it shows plain values with \code{"pill"} and
+#'   full-cell backgrounds with \code{"fill"}.
 #' @return AnalyzeTableTiny returns a \code{\link[tinytable:tt]{tinytable}}
 #'   object. Note that, unlike \code{AnalyzeTable}, no warning icon is shown
 #'   for high inconsistency (only the background color); values are otherwise
@@ -204,11 +205,14 @@ AnalyzeTableTiny <- function(ahpTree,
   if (!is.null(names_fontsize)) t <- tinytable::style_tt(t, j = 1, fontsize = names_fontsize)
   t <- tinytable::style_tt(t, j = numcols, align = "r")
   for (i in seq_len(nrow(disp))) t <- tinytable::style_tt(t, i = i, j = 1, indent = displevel[i]-1)
-  for (j in seq_len(ncol(bg))) for (i in seq_len(nrow(bg))) {
-    if (style == "pill") {
-      t <- tinytable::style_tt(t, i = i, j = match(colnames(bg)[j], names(disp)),
-                               background = bg[i, j], output = "latex")
-    } else {
+  # NOTE: in pill mode there are NO cell backgrounds at all: the color
+  # lives in the HTML/Typst wrappers above. (Limiting backgrounds to
+  # output = "latex" does not work: tinytable's Typst fill function
+  # applies stored backgrounds unconditionally, hiding the pills.)
+  # LaTeX output therefore shows plain values in pill mode; use
+  # style = "fill" for colored LaTeX tables.
+  if (style == "fill") {
+    for (j in seq_len(ncol(bg))) for (i in seq_len(nrow(bg))) {
       t <- tinytable::style_tt(t, i = i, j = match(colnames(bg)[j], names(disp)), background = bg[i, j])
     }
   }

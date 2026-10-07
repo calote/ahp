@@ -98,12 +98,12 @@ test_that("tinytable NA cells have white background", {
   df <- Analyze(lp)
   na_row <- which(is.na(df$Inconsistency))
   expect_true(length(na_row) > 0)  # the fixture really has a missing value
-  t <- AnalyzeTableTiny(lp)
+  t <- AnalyzeTableTiny(lp, style = "fill")
   j_incon <- match("Inconsistency", names(t@data))
   hit <- FALSE
   for (k in seq_along(t@lazy_style)) {
     cl <- t@lazy_style[[k]]
-    if ("background" %in% names(cl) &&
+    if ("background" %in% names(cl) && !is.null(cl$background) &&
         isTRUE(eval(cl$i) == na_row) &&
         isTRUE(eval(cl$j) == j_incon) &&
         identical(unname(eval(cl$background)), "white")) hit <- TRUE
@@ -129,4 +129,17 @@ test_that("tinytable pill style wraps values", {
   expect_true(grepl("<span", html_pill, fixed = TRUE))
   expect_true(grepl("#box(fill", typ_pill, fixed = TRUE))
   expect_false(grepl("<span", html_fill, fixed = TRUE))
+})
+
+test_that("tinytable pill mode stores no cell backgrounds", {
+  testthat::skip_if_not_installed("tinytable")
+  m2 <- Load(system.file("extdata", "ejmultinivel.ahp", package="ahp"))
+  Calculate(m2)
+  has_bg_calls <- function(t) {
+    any(vapply(t@lazy_style,
+               function(cl) "background" %in% names(cl) && !is.null(cl$background),
+               logical(1)))
+  }
+  expect_false(has_bg_calls(AnalyzeTableTiny(m2)))
+  expect_true(has_bg_calls(AnalyzeTableTiny(m2, style = "fill")))
 })

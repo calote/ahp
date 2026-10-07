@@ -12,7 +12,7 @@
   like AnalyzeTable (native lines in Typst/LaTeX, CSS rule in HTML)
 - ADD: AnalyzeTableTiny() style "pill" (default) wraps values in inset
   rounded boxes like AnalyzeTable in HTML and Typst; "fill" keeps
-  full-cell backgrounds (always used in LaTeX)
+  full-cell backgrounds (the only colored mode in LaTeX)
 - FIX (issues #11, #13, PR by mestinso): consistency ratio now also
   computed for MeanNormalization and GeometricMean priority methods
 - NOTE (issues #15, #19, #23): verified fixed - RI supports n > 8,
