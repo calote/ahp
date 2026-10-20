@@ -1,5 +1,10 @@
 
 
+ 
+#' @keywords internal
+.ahp_env <- new.env(parent = emptyenv())
+.ahp_env$col_gap_id <- 1L
+
 
 #' Displays the AHP analysis in form of an html table, with gradient
 #' colors and nicely formatted.
@@ -103,7 +108,9 @@ AnalyzeTable <- function(ahpTree,
 #' @param col_gap Extra space between columns, in points. \code{NULL}
 #'   (the default) adds no extra gap. It is applied at column level, so
 #'   that headers and body cells stay aligned: as cell padding in HTML
-#'   and as the table's \code{gutter} in Typst.
+#'   and as the table's \code{gutter} in Typst. In HTML the rule is
+#'   scoped to this table, so it does not affect other tinytable tables
+#'   in the same document.
 #' @return AnalyzeTableTiny returns a \code{\link[tinytable:tt]{tinytable}}
 #'   object. Note that, unlike \code{AnalyzeTable}, no warning icon is shown
 #'   for high inconsistency (only the background color); values are otherwise
@@ -223,8 +230,14 @@ AnalyzeTableTiny <- function(ahpTree,
   css_rule <- "tbody td { border-bottom: 1px solid #DDDDDD; }"
   if (gap > 0) {
     px <- round(gap * 96/72, 1)  # points -> pixels
+    # NOTE: the CSS rule is global to the document, so it would also
+    # affect other tinytable tables rendered next to this one. Use a
+    # unique class for this table to restrict the rule to it.
+    cls <- paste0("ahp-colgap-", .ahp_env$col_gap_id)
+    .ahp_env$col_gap_id <- .ahp_env$col_gap_id + 1L
     css_rule <- paste0(css_rule,
-                       sprintf(" table.tinytable th, table.tinytable td { padding-right: %spx; }", px))
+                       sprintf(" .%s th, .%s td { padding-right: %spx; }", cls, cls, px))
+    t <- tinytable::theme_html(t, class = cls)
     fin_gap <- function(x) {
       x@table_string <- sub("(#table\\(\\s*)",
                             paste0("\\1gutter: ", gap, "pt,\n    "),

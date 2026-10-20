@@ -119,7 +119,8 @@ with \code{"fill"}.}
 \code{AnalyzeTableTiny}. \code{NULL} (the default) adds no extra gap.
 It is applied at column level, so that headers and body cells stay
 aligned: as cell padding in HTML and as the table's \code{gutter} in
-Typst.}
+Typst. In HTML the rule is scoped to this table, so it does not affect
+other tinytable tables in the same document.}
 
 \item{vwidth,vheight}{Viewport size in pixels used for the screenshot
 in \code{AnalyzeTable_to_png} and \code{ahp_tree_png} (see

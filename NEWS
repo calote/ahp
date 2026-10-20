@@ -11,6 +11,8 @@
   rounded boxes like AnalyzeTable in HTML and Typst; "fill" keeps
   full-cell backgrounds (the only colored mode in LaTeX)
 - ADD: AnalyzeTableTiny() gains col_gap to add extra space between columns
+- FIX: AnalyzeTableTiny() col_gap now applies only to its own table in HTML
+  (the CSS rule was global and leaked into other tables of the document)
 - ADD: AnalyzeTable_to_png() exports the AnalyzeTable() HTML table to a PNG
   image (via webshot2/Chromium), ready to embed in HTML, Typst or PDF
 - ADD: ahp_tree_png() saves a Visualize() tree to PNG via webshot2/Chromium

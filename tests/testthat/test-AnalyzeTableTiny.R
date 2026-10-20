@@ -152,12 +152,14 @@ test_that("tinytable col_gap adds space between columns", {
   t0 <- AnalyzeTableTiny(m2)
   t1 <- AnalyzeTableTiny(m2, col_gap = 10)
   # HTML: extra cell padding, applied to headers AND body cells so that
-  # both stay aligned
+  # both stay aligned. The rule is scoped to a unique class, so that it
+  # does not leak into other tinytable tables of the same document.
   h <- tempfile(fileext = ".html")
   tinytable::save_tt(t1, h, overwrite = TRUE)
   html <- paste(readLines(h, warn = FALSE), collapse = "\n")
-  expect_true(grepl("table.tinytable th, table.tinytable td { padding-right: 13.3px; }",
-                    html, fixed = TRUE))
+  expect_true(grepl("padding-right: 13.3px", html, fixed = TRUE))
+  expect_false(grepl("table.tinytable th, table.tinytable td { padding-right",
+                     html, fixed = TRUE))
   # Typst: column gutter, which separates whole columns (headers included)
   y <- tempfile(fileext = ".typ")
   tinytable::save_tt(t1, y, overwrite = TRUE)
@@ -168,6 +170,11 @@ test_that("tinytable col_gap adds space between columns", {
   tinytable::save_tt(t0, y0, overwrite = TRUE)
   typ0 <- paste(readLines(y0, warn = FALSE), collapse = "\n")
   expect_false(grepl("gutter: 10pt", typ0, fixed = TRUE))
+  # the HTML rule of a table with gap must not affect a table without it
+  h0 <- tempfile(fileext = ".html")
+  tinytable::save_tt(t0, h0, overwrite = TRUE)
+  html0 <- paste(readLines(h0, warn = FALSE), collapse = "\n")
+  expect_false(grepl("padding-right: 13.3px", html0, fixed = TRUE))
 })
 
 test_that("AnalyzeTable_to_png writes a PNG", {
