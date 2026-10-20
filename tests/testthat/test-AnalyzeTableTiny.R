@@ -178,6 +178,20 @@ test_that("tinytable col_gap adds space between columns", {
   expect_false(grepl("padding-right: 18.7px", html0, fixed = TRUE))
 })
 
+test_that("AnalyzeTable_to_png insert returns markdown", {
+  testthat::skip_if_not_installed("webshot2")
+  testthat::skip_if_not_installed("htmltools")
+  m2 <- Load(system.file("extdata", "laptop.ahp", package="ahp"))
+  Calculate(m2)
+  f <- tempfile(fileext = ".png")
+  # outside a knitted document the markdown is printed and the path returned
+  out <- capture.output(r <- AnalyzeTable_to_png(m2, f, insert = TRUE, caption = "Cap"))
+  expect_true(file.exists(f))
+  expect_true(any(grepl("![Cap]", out, fixed = TRUE)))
+  expect_true(any(grepl(basename(f), out, fixed = TRUE)))
+  expect_equal(r, f)
+})
+
 test_that("AnalyzeTable_to_png writes a PNG", {
   testthat::skip_if_not_installed("webshot2")
   testthat::skip_if_not_installed("htmltools")

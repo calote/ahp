@@ -17,6 +17,8 @@
   next column, and are kept in a single line
 - ADD: AnalyzeTable_to_png() exports the AnalyzeTable() HTML table to a PNG
   image (via webshot2/Chromium), ready to embed in HTML, Typst or PDF
+- ADD: AnalyzeTable_to_png() gains insert/caption/image_width to insert the
+  image in the document being built
 - ADD: ahp_tree_png() saves a Visualize() tree to PNG via webshot2/Chromium
   for embedding in HTML and Typst/PDF documents
 - FIX: AnalyzeTableTiny() paints missing-value cells white instead of the

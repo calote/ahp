@@ -54,6 +54,9 @@ AnalyzeTable_to_png(
   vheight = NULL,
   background = "white",
   delay = 0.2,
+  insert = FALSE,
+  caption = NULL,
+  image_width = "100\%",
   ...
 )
 
@@ -115,6 +118,14 @@ inset rounded boxes like \code{AnalyzeTable}, in HTML and Typst output;
 it shows plain values with \code{"pill"} and full-cell backgrounds
 with \code{"fill"}.}
 
+\item{insert}{If \code{TRUE}, the image is also inserted in the
+document being built (Quarto, R Markdown, ...), with the caption
+given by \code{caption}. If \code{FALSE} (the default), nothing is
+inserted and you embed the PNG yourself with
+\code{![caption](file.png)}. Can also be a string, used as caption.
+Note: the insertion relies on the value returned by the chunk, so
+call the function as the last expression of the chunk.}
+
 \item{col_gap}{Extra space between columns, in points, for
 \code{AnalyzeTableTiny}. \code{NULL} (the default) adds no extra gap.
 It is applied at column level, so that headers and body cells stay
@@ -131,6 +142,12 @@ in \code{AnalyzeTable_to_png} and \code{ahp_tree_png} (see
 
 \item{file}{Output PNG file name (for \code{ahp_tree_png} and
 \code{AnalyzeTable_to_png}).}
+
+\item{caption}{Caption of the inserted image (for
+\code{AnalyzeTable_to_png}). Default: the file name.}
+
+\item{image_width}{Width of the inserted image, e.g. \code{"100\%"} or
+\code{"600px"} (for \code{AnalyzeTable_to_png}).}
 
 \item{selector}{CSS selector passed to \code{webshot2::webshot()}.}
 

@@ -290,6 +290,16 @@ AnalyzeTableTiny <- function(ahpTree,
 #'   (see \code{webshot2::webshot}). \code{NULL} keeps the default.
 #' @param background Background color of the screenshot (default white).
 #' @param delay Seconds to wait before taking the screenshot.
+#' @param insert If \code{TRUE}, the image is also inserted in the
+#'   document being built (Quarto, R Markdown, ...), with the caption
+#'   given by \code{caption}. If \code{FALSE} (the default), nothing is
+#'   inserted and you embed the PNG yourself with
+#'   \code{![caption](file.png)}. Can also be a string, used as caption.
+#'   Note: the insertion relies on the value returned by the chunk, so
+#'   call the function as the last expression of the chunk.
+#' @param caption Caption of the inserted image (default: the file name).
+#' @param image_width Width of the inserted image, e.g. \code{"100\%"} or
+#'   \code{"600px"}.
 #' @param ... Additional arguments passed to \code{AnalyzeTable()} (e.g.
 #'   \code{variable} or \code{sort}).
 #' @return The path to the PNG file (invisibly).
@@ -301,6 +311,9 @@ AnalyzeTable_to_png <- function(ahpTree,
                                 vheight = NULL,
                                 background = "white",
                                 delay = 0.2,
+                                insert = FALSE,
+                                caption = NULL,
+                                image_width = "100%",
                                 ...) {
   if (!requireNamespace("webshot2", quietly = TRUE)) {
     stop("Package 'webshot2' is required for AnalyzeTable_to_png(). Please install it with install.packages('webshot2').")
@@ -315,6 +328,20 @@ AnalyzeTable_to_png <- function(ahpTree,
   if (!is.null(vwidth)) args$vwidth <- vwidth
   if (!is.null(vheight)) args$vheight <- vheight
   do.call(webshot2::webshot, args)
+  if (isTRUE(insert) || is.character(insert)) {
+    cap <- if (is.character(insert)) insert else caption
+    if (is.null(cap)) cap <- tools::file_path_sans_ext(basename(file))
+    md <- sprintf("![%s](%s){width=\"%s\"}", cap, file, image_width)
+    # NOTE: asis_output() must be the VALUE of the chunk expression, not
+    # just printed from inside the function: knitr only turns the returned
+    # value into raw markdown. Outside a knitted document the markdown is
+    # simply printed.
+    if (requireNamespace("knitr", quietly = TRUE) &&
+        isTRUE(getOption("knitr.in.progress"))) {
+      return(knitr::asis_output(md))
+    }
+    cat(md, "\n")
+  }
   invisible(file)
 }
 
