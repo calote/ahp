@@ -4,12 +4,12 @@
 - CHANGE: Pedro L. Luque takes over as maintainer
 - DOC: NEWS entries, README install and vignette references
 - ADD: AnalyzeTableTiny() gains na_replace (default "" for missing values)
-- ADD: AnalyzeTableTiny() gains width (default \code{width = 1}, full
+- ADD: AnalyzeTableTiny() gains width (default \code{width = NULL}, auto-sizing to content)
   line width in HTML; use \code{width = NULL} for auto-sizing to
   content in Typst) and names_fontsize for the names column only
 - FIX: AnalyzeTableTiny() paints missing-value cells white instead of the
   darkest gradient color
-- ADD: AnalyzeTableTiny() default table width is \code{width = 1} (full line width in HTML); use \code{width = NULL} for auto-sizing to content in Typst
+- ADD: AnalyzeTableTiny() default table width is \code{width = NULL} (auto-sizing to content); use \code{width = 1} for full line width in HTML
 - ADD: AnalyzeTableTiny() style "pill" (default) wraps values in inset
   rounded boxes like AnalyzeTable in HTML and Typst; "fill" keeps
   full-cell backgrounds (the only colored mode in LaTeX)

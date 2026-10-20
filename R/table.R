@@ -117,7 +117,7 @@ AnalyzeTableTiny <- function(ahpTree,
                              alternativeColor = "thistle4",
                              fontsize = NULL,
                              na_replace = "",
-                             width = 1,
+                             width = NULL,
                              names_fontsize = NULL,
                              style = c("pill", "fill")) {
 
