@@ -27,6 +27,7 @@ Suggests:
     webshot,
     webshot2,
     htmlwidgets,
+    htmltools,
     tinytable (>= 0.19.0)
 Description: Model and analyse complex decision making problems
     using the Analytic Hierarchy Process (AHP) by Thomas Saaty.

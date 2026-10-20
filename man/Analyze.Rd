@@ -4,6 +4,7 @@
 \alias{Analyze}
 \alias{AnalyzeTable}
 \alias{AnalyzeTableTiny}
+\alias{AnalyzeTable_to_png}
 \alias{ahp_tree_png}
 \alias{PruneByCutoff}
 \alias{PruneLevels}
@@ -43,6 +44,17 @@ AnalyzeTableTiny(
   names_fontsize = NULL,
   style = c("pill", "fill"),
   col_gap = NULL
+)
+
+AnalyzeTable_to_png(
+  ahpTree,
+  file = "ahp-table.png",
+  width = "100\%",
+  vwidth = NULL,
+  vheight = NULL,
+  background = "white",
+  delay = 0.2,
+  ...
 )
 
 PruneByCutoff(node, decisionMaker, minWeight = 0)
@@ -109,14 +121,18 @@ It is applied at column level, so that headers and body cells stay
 aligned: as cell padding in HTML and as the table's \code{gutter} in
 Typst.}
 
-\item{file}{Output PNG file name (for \code{ahp_tree_png}).}
+\item{vwidth,vheight}{Viewport size in pixels used for the screenshot
+in \code{AnalyzeTable_to_png} and \code{ahp_tree_png} (see
+\code{webshot2::webshot()}). \code{NULL} keeps the default.}
+
+\item{background}{Background color of the screenshot (default white).}
+
+\item{file}{Output PNG file name (for \code{ahp_tree_png} and
+\code{AnalyzeTable_to_png}).}
 
 \item{selector}{CSS selector passed to \code{webshot2::webshot()}.}
 
 \item{delay}{Seconds to wait before taking the screenshot.}
-
-\item{vwidth,vheight}{Viewport size in pixels passed to
-\code{webshot2::webshot()}.}
 
 \item{...}{Additional arguments passed to \code{webshot2::webshot()}.}
 
@@ -139,6 +155,8 @@ identical.
 the Prune methods must return \code{TRUE} for nodes to be kept, \code{FALSE} for nodes to be pruned
 
 ahp_tree_png returns the path to the PNG file (invisibly).
+
+AnalyzeTable_to_png returns the path to the PNG file (invisibly).
 }
 \description{
 Converts the calculated AHP tree into a \code{data.frame} or an HTML table, containing all the weight contributions or
@@ -171,6 +189,7 @@ ahpFile <- system.file("extdata", "car.ahp", package="ahp")
 carAhp <- Load(ahpFile)
 Calculate(carAhp)
 ahp_tree_png(carAhp, "car-tree.png")
+AnalyzeTable_to_png(carAhp, "car-table.png")
 }
 
 }

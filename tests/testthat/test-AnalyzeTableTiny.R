@@ -169,3 +169,15 @@ test_that("tinytable col_gap adds space between columns", {
   typ0 <- paste(readLines(y0, warn = FALSE), collapse = "\n")
   expect_false(grepl("gutter: 10pt", typ0, fixed = TRUE))
 })
+
+test_that("AnalyzeTable_to_png writes a PNG", {
+  testthat::skip_if_not_installed("webshot2")
+  testthat::skip_if_not_installed("htmltools")
+  m2 <- Load(system.file("extdata", "laptop.ahp", package="ahp"))
+  Calculate(m2)
+  f <- tempfile(fileext = ".png")
+  r <- AnalyzeTable_to_png(m2, file = f)
+  expect_equal(r, f)
+  expect_true(file.exists(f))
+  expect_gt(file.size(f), 0)
+})

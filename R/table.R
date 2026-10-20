@@ -181,6 +181,7 @@ AnalyzeTableTiny <- function(ahpTree,
   # call (a vector fails at render time), so background colors are applied
   # cell by cell. `background` must also be the last style applied: any later
   # style_tt() call with selectors re-validates the stored backgrounds.
+  # (See also AnalyzeTable_to_png() for exporting the HTML table to PNG.)
   if (is.null(na_replace)) na_replace <- ""
   if (variable[1] == "score") fmt <- function(x) ifelse(is.na(x), na_replace, as.character(x))
   else fmt <- function(x) ifelse(is.na(x), na_replace, sprintf("%.1f%%", 100*x))
@@ -250,6 +251,48 @@ AnalyzeTableTiny <- function(ahpTree,
 
   t
 
+}
+
+
+#' Export an AHP analysis table to a PNG image.
+#'
+#' Renders the \code{formattable} table produced by \code{AnalyzeTable()}
+#' in a headless browser and saves a screenshot of it as a PNG file, ready
+#' to be embedded in HTML, Typst or PDF documents.
+#'
+#' @param ahpTree The calculated AHP tree (output of \code{Calculate()}).
+#' @param file Output PNG file name.
+#' @param width Width of the rendered htmlwidget (default \code{"100%"}).
+#' @param vwidth,vheight Viewport size in pixels used for the screenshot
+#'   (see \code{webshot2::webshot}). \code{NULL} keeps the default.
+#' @param background Background color of the screenshot (default white).
+#' @param delay Seconds to wait before taking the screenshot.
+#' @param ... Additional arguments passed to \code{AnalyzeTable()} (e.g.
+#'   \code{variable} or \code{sort}).
+#' @return The path to the PNG file (invisibly).
+#' @export
+AnalyzeTable_to_png <- function(ahpTree,
+                                file = "ahp-table.png",
+                                width = "100%",
+                                vwidth = NULL,
+                                vheight = NULL,
+                                background = "white",
+                                delay = 0.2,
+                                ...) {
+  if (!requireNamespace("webshot2", quietly = TRUE)) {
+    stop("Package 'webshot2' is required for AnalyzeTable_to_png(). Please install it with install.packages('webshot2').")
+  }
+  if (!requireNamespace("htmltools", quietly = TRUE)) {
+    stop("Package 'htmltools' is required for AnalyzeTable_to_png(). Please install it with install.packages('htmltools').")
+  }
+  w <- formattable::as.htmlwidget(AnalyzeTable(ahpTree, ...), width = width)
+  path <- htmltools::html_print(w, background = background, viewer = NULL)
+  url <- paste0("file:///", gsub("\\\\", "/", normalizePath(path)))
+  args <- list(url = url, file = file, selector = ".formattable_widget", delay = delay)
+  if (!is.null(vwidth)) args$vwidth <- vwidth
+  if (!is.null(vheight)) args$vheight <- vheight
+  do.call(webshot2::webshot, args)
+  invisible(file)
 }
 
 
