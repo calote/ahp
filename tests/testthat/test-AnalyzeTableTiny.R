@@ -16,7 +16,8 @@ test_that("tinytable values match Analyze", {
   t <- AnalyzeTableTiny(carAhp)
   tdf <- t@data
   expect_equal(nrow(tdf), nrow(df))
-  expect_equal(names(tdf), names(df))
+  # names column in the table carries leading spaces; trim before compare
+  expect_equal(trimws(names(tdf)), trimws(names(df)))
   numcols <- setdiff(names(tdf), " ")
   fmt <- function(x) ifelse(is.na(x), "", sprintf("%.1f%%", 100*x))
   expect_true(all(mapply(function(a, b) all(a == b),
