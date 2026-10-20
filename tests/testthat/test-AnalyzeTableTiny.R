@@ -144,3 +144,26 @@ test_that("tinytable pill mode stores no cell backgrounds", {
   expect_false(has_bg_calls(AnalyzeTableTiny(m2)))
   expect_true(has_bg_calls(AnalyzeTableTiny(m2, style = "fill")))
 })
+
+test_that("tinytable col_gap adds space between columns", {
+  testthat::skip_if_not_installed("tinytable")
+  m2 <- Load(system.file("extdata", "ejmultinivel.ahp", package="ahp"))
+  Calculate(m2)
+  t0 <- AnalyzeTableTiny(m2)
+  t1 <- AnalyzeTableTiny(m2, col_gap = 10)
+  # HTML: extra cell padding
+  h <- tempfile(fileext = ".html")
+  tinytable::save_tt(t1, h, overwrite = TRUE)
+  html <- paste(readLines(h, warn = FALSE), collapse = "\n")
+  expect_true(grepl("padding-right", html, fixed = TRUE))
+  # Typst: extra inset in the cell boxes
+  y <- tempfile(fileext = ".typ")
+  tinytable::save_tt(t1, y, overwrite = TRUE)
+  typ <- paste(readLines(y, warn = FALSE), collapse = "\n")
+  expect_true(grepl("inset: (right: 10pt)", typ, fixed = TRUE))
+  # no gap by default
+  y0 <- tempfile(fileext = ".typ")
+  tinytable::save_tt(t0, y0, overwrite = TRUE)
+  typ0 <- paste(readLines(y0, warn = FALSE), collapse = "\n")
+  expect_false(grepl("inset: (right: 10pt)", typ0, fixed = TRUE))
+})

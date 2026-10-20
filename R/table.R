@@ -100,6 +100,11 @@ AnalyzeTable <- function(ahpTree,
 #'   and Typst output; \code{"fill"} paints the whole cell. LaTeX output
 #'   has no pill support: it shows plain values with \code{"pill"} and
 #'   full-cell backgrounds with \code{"fill"}.
+#' @param col_gap Extra space between columns, in points. \code{NULL}
+#'   (the default) adds no extra gap. In HTML it is applied as cell
+#'   padding; in Typst as extra inset in the cell boxes (a table-level
+#'   \code{gutter} or \code{inset} would steal width from the columns
+#'   and squeeze long row names).
 #' @return AnalyzeTableTiny returns a \code{\link[tinytable:tt]{tinytable}}
 #'   object. Note that, unlike \code{AnalyzeTable}, no warning icon is shown
 #'   for high inconsistency (only the background color); values are otherwise
@@ -119,7 +124,8 @@ AnalyzeTableTiny <- function(ahpTree,
                              na_replace = "",
                              width = NULL,
                              names_fontsize = NULL,
-                             style = c("pill", "fill")) {
+                             style = c("pill", "fill"),
+                             col_gap = NULL) {
 
   style <- match.arg(style)
 
@@ -182,6 +188,7 @@ AnalyzeTableTiny <- function(ahpTree,
   disp[ , numcols] <- lapply(disp[ , numcols], fmt)
 
   t <- tinytable::tt(disp, width = width)
+  gap <- if (is.null(col_gap)) 0 else col_gap
   if (style == "pill") {
     # NOTE: inset rounded boxes like AnalyzeTable, per output format.
     # Full-cell backgrounds are kept for LaTeX only (see below).
@@ -192,12 +199,23 @@ AnalyzeTableTiny <- function(ahpTree,
         ifelse(m0, sprintf(paste0("<span style=\"display: block; background: %s;",
                                   " border-radius: 4px; padding: 0 4px;\">%s</span>"), cc0, x), x)
       }})
-      pill_typst <- local({cc0 <- cc; m0 <- mask; function(x) {
-        ifelse(m0, sprintf("#box(fill: rgb(\"%s\"), radius: 4pt, inset: (x: 6pt, y: 3pt))[%s]", cc0, x), x)
+      # NOTE: the gap is added as right inset of the box, not as table
+      # gutter/inset: those steal width from the columns, which squeezes
+      # long row names (Typst cannot break a single long word).
+      pill_typst <- local({cc0 <- cc; m0 <- mask; g0 <- gap; function(x) {
+        ifelse(m0, sprintf("#box(fill: rgb(\"%s\"), radius: 4pt, inset: (left: 6pt, right: %gpt, top: 3pt, bottom: 3pt))[%s]",
+                           cc0, 6 + g0, x), x)
       }})
       t <- tinytable::format_tt(t, j = col, fn = pill_html, output = "html")
       t <- tinytable::format_tt(t, j = col, fn = pill_typst, output = "typst")
     }
+  }
+  # NOTE: extra space after the row names (column 1). In HTML the cells
+  # get padding-right (see the CSS rule below); in Typst the name is
+  # wrapped in a box with right inset. This keeps long names intact.
+  if (gap > 0) {
+    name_typst <- local({g0 <- gap; function(x) sprintf("#box(inset: (right: %gpt))[%s]", g0, x)})
+    t <- tinytable::format_tt(t, j = 1, fn = name_typst, output = "typst")
   }
   if (!is.null(fontsize)) t <- tinytable::style_tt(t, fontsize = fontsize)
   t <- tinytable::style_tt(t, j = 1, bold = TRUE)
@@ -207,7 +225,15 @@ AnalyzeTableTiny <- function(ahpTree,
   # cell backgrounds (see NOTE below).
   t <- tinytable::style_tt(t, i = seq_len(nrow(disp)),
                            line = "b", line_color = "#DDDDDD", line_width = 0.05)
-  t <- tinytable::theme_html(t, css_rule = "tbody td { border-bottom: 1px solid #DDDDDD; }")
+  # NOTE: extra space between columns in HTML. Typst gets the same gap
+  # from the boxes built above (see NOTE there).
+  css_rule <- "tbody td { border-bottom: 1px solid #DDDDDD; }"
+  if (gap > 0) {
+    px <- round(gap * 96/72, 1)  # points -> pixels
+    css_rule <- paste0(css_rule,
+                       sprintf(" table.tinytable td { padding-right: %spx; }", px))
+  }
+  t <- tinytable::theme_html(t, css_rule = css_rule)
   if (!is.null(names_fontsize)) t <- tinytable::style_tt(t, j = 1, fontsize = names_fontsize)
   t <- tinytable::style_tt(t, j = numcols, align = "r")
   for (i in seq_len(nrow(disp))) t <- tinytable::style_tt(t, i = i, j = 1, indent = displevel[i]-1)

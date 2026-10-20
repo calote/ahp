@@ -41,7 +41,8 @@ AnalyzeTableTiny(
   na_replace = "",
   width = NULL,
   names_fontsize = NULL,
-  style = c("pill", "fill")
+  style = c("pill", "fill"),
+  col_gap = NULL
 )
 
 PruneByCutoff(node, decisionMaker, minWeight = 0)
@@ -101,6 +102,12 @@ inset rounded boxes like \code{AnalyzeTable}, in HTML and Typst output;
 \code{"fill"} paints the whole cell. LaTeX output has no pill support:
 it shows plain values with \code{"pill"} and full-cell backgrounds
 with \code{"fill"}.}
+
+\item{col_gap}{Extra space between columns, in points, for
+\code{AnalyzeTableTiny}. \code{NULL} (the default) adds no extra gap.
+In HTML it is applied as cell padding; in Typst as extra inset in the
+cell boxes (a table-level \code{gutter} or \code{inset} would steal
+width from the columns and squeeze long row names).}
 
 \item{file}{Output PNG file name (for \code{ahp_tree_png}).}
 
