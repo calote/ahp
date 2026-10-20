@@ -149,9 +149,9 @@ AnalyzeTableTiny <- function(ahpTree,
   displevel <- df$level
   names(df)[1] <- " "
   disp <- df[ , -2]
-  # NOTE: leave some breathing room before the first column text so it does
+  # NOTE: leave some breathing room around the first column text so it does
   # not look glued to the cell border (matches AnalyzeTable look-and-feel).
-  disp[, 1] <- paste0("   ", disp[, 1])
+  disp[, 1] <- paste0("   ", disp[, 1], "   ")
 
   # NOTE: the weight column is called "Weight" or "Priority" depending on
   # `variable` (AnalyzeTable uses it positionally as well). Never assume
