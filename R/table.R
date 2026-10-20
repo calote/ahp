@@ -149,9 +149,12 @@ AnalyzeTableTiny <- function(ahpTree,
   displevel <- df$level
   names(df)[1] <- " "
   disp <- df[ , -2]
-  # NOTE: leave some breathing room around the first column text so it does
-  # not look glued to the cell border (matches AnalyzeTable look-and-feel).
-  disp[, 1] <- paste0("   ", disp[, 1], "   ")
+  # NOTE: leave some breathing room after the first column text so it does
+  # not look glued to the next column. Regular spaces are collapsed (or
+  # trimmed) in both HTML and Typst, so use non-breaking spaces (NBSP),
+  # which are preserved and also count for the column width. The left
+  # padding is already provided by the `indent` styling below.
+  disp[, 1] <- paste0(disp[, 1], strrep("\u00A0", 3))
 
   # NOTE: the weight column is called "Weight" or "Priority" depending on
   # `variable` (AnalyzeTable uses it positionally as well). Never assume

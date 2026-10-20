@@ -4,6 +4,7 @@
 \alias{Analyze}
 \alias{AnalyzeTable}
 \alias{AnalyzeTableTiny}
+\alias{ahp_tree_png}
 \alias{PruneByCutoff}
 \alias{PruneLevels}
 \title{Analyze your AHP model}
@@ -59,33 +60,6 @@ ahp_tree_png(
 }
 
 \arguments{
-\item{ahpTree}{The calculated AHP tree (output of \code{Calculate()}).}
-
-\item{file}{Output PNG file name.}
-
-\item{selector}{CSS selector passed to \code{webshot2::webshot()}.}
-
-\item{delay}{Seconds to wait before taking the screenshot.}
-
-\item{vwidth,vheight}{Viewport size in pixels passed to
-  \code{webshot2::webshot()}.}
-
-\item{...}{Additional arguments passed to \code{webshot2::webshot()}.}
-}
-
-\value{
-ahp_tree_png returns the path to the PNG file (invisibly).
-}
-
-\examples{
-\dontrun{
-ahpFile <- system.file("extdata", "car.ahp", package="ahp")
-carAhp <- Load(ahpFile)
-Calculate(carAhp)
-ahp_tree_png(carAhp, "car-tree.png")
-}
-}
-\arguments{
 \item{ahpTree}{the calculated AHP \code{data.tree}}
 
 \item{decisionMaker}{the name of the decision maker. The default returns the joint decision.}
@@ -128,6 +102,17 @@ inset rounded boxes like \code{AnalyzeTable}, in HTML and Typst output;
 it shows plain values with \code{"pill"} and full-cell backgrounds
 with \code{"fill"}.}
 
+\item{file}{Output PNG file name (for \code{ahp_tree_png}).}
+
+\item{selector}{CSS selector passed to \code{webshot2::webshot()}.}
+
+\item{delay}{Seconds to wait before taking the screenshot.}
+
+\item{vwidth,vheight}{Viewport size in pixels passed to
+\code{webshot2::webshot()}.}
+
+\item{...}{Additional arguments passed to \code{webshot2::webshot()}.}
+
 \item{node}{the \code{Node}}
 
 \item{minWeight}{prunes the nodes whose weightContribution is smaller than the minWeight}
@@ -145,6 +130,8 @@ for high inconsistency (only the background color); values are otherwise
 identical.
 
 the Prune methods must return \code{TRUE} for nodes to be kept, \code{FALSE} for nodes to be pruned
+
+ahp_tree_png returns the path to the PNG file (invisibly).
 }
 \description{
 Converts the calculated AHP tree into a \code{data.frame} or an HTML table, containing all the weight contributions or
@@ -171,5 +158,12 @@ AnalyzeTable(
    variable = "score",
    sort = "totalPriority"
 )
+
+\dontrun{
+ahpFile <- system.file("extdata", "car.ahp", package="ahp")
+carAhp <- Load(ahpFile)
+Calculate(carAhp)
+ahp_tree_png(carAhp, "car-tree.png")
+}
 
 }
