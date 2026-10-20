@@ -110,7 +110,7 @@ AnalyzeTable <- function(ahpTree,
 #'   that headers and body cells stay aligned: as cell padding in HTML
 #'   and as the table's \code{gutter} in Typst. In HTML the rule is
 #'   scoped to this table, so it does not affect other tinytable tables
-#'   in the same document.
+#'   in the same document. Header labels are kept in a single line.
 #' @return AnalyzeTableTiny returns a \code{\link[tinytable:tt]{tinytable}}
 #'   object. Note that, unlike \code{AnalyzeTable}, no warning icon is shown
 #'   for high inconsistency (only the background color); values are otherwise
@@ -228,16 +228,26 @@ AnalyzeTableTiny <- function(ahpTree,
   #   (an inset inside the cells would shift the body text with respect
   #   to the headers).
   css_rule <- "tbody td { border-bottom: 1px solid #DDDDDD; }"
+  # NOTE: column separation. The same padding-right goes to the header
+  # cells (th) and the body cells (td): header labels are plain
+  # right-aligned text with no padding of their own, so without it they
+  # touch each other, while the value boxes have their own 4px padding.
+  # Applying it to both keeps the headers aligned with their values and
+  # separates them from the next column.
+  px <- round((gap + 4) * 96/72, 1)  # points -> pixels (4pt = pill padding)
+  # NOTE: the CSS rule is global to the document, so it would also
+  # affect other tinytable tables rendered next to this one. Use a
+  # unique class for this table to restrict the rule to it.
+  cls <- paste0("ahp-colgap-", .ahp_env$col_gap_id)
+  .ahp_env$col_gap_id <- .ahp_env$col_gap_id + 1L
+  # NOTE: `white-space: nowrap` keeps the header labels in a single line:
+  # the browser would otherwise break them ("Sr-Fernandez" -> "Sr-" /
+  # "Fernandez") because the columns are sized to their content.
+  css_rule <- paste0(css_rule,
+                     sprintf(" .%s th { white-space: nowrap; }", cls),
+                     sprintf(" .%s th, .%s td { padding-right: %spx; }", cls, cls, px))
+  t <- tinytable::theme_html(t, class = cls)
   if (gap > 0) {
-    px <- round(gap * 96/72, 1)  # points -> pixels
-    # NOTE: the CSS rule is global to the document, so it would also
-    # affect other tinytable tables rendered next to this one. Use a
-    # unique class for this table to restrict the rule to it.
-    cls <- paste0("ahp-colgap-", .ahp_env$col_gap_id)
-    .ahp_env$col_gap_id <- .ahp_env$col_gap_id + 1L
-    css_rule <- paste0(css_rule,
-                       sprintf(" .%s th, .%s td { padding-right: %spx; }", cls, cls, px))
-    t <- tinytable::theme_html(t, class = cls)
     fin_gap <- function(x) {
       x@table_string <- sub("(#table\\(\\s*)",
                             paste0("\\1gutter: ", gap, "pt,\n    "),

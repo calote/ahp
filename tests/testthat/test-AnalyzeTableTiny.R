@@ -157,7 +157,8 @@ test_that("tinytable col_gap adds space between columns", {
   h <- tempfile(fileext = ".html")
   tinytable::save_tt(t1, h, overwrite = TRUE)
   html <- paste(readLines(h, warn = FALSE), collapse = "\n")
-  expect_true(grepl("padding-right: 13.3px", html, fixed = TRUE))
+  expect_true(grepl("padding-right: 18.7px", html, fixed = TRUE))
+  expect_true(grepl("white-space: nowrap", html, fixed = TRUE))
   expect_false(grepl("table.tinytable th, table.tinytable td { padding-right",
                      html, fixed = TRUE))
   # Typst: column gutter, which separates whole columns (headers included)
@@ -174,7 +175,7 @@ test_that("tinytable col_gap adds space between columns", {
   h0 <- tempfile(fileext = ".html")
   tinytable::save_tt(t0, h0, overwrite = TRUE)
   html0 <- paste(readLines(h0, warn = FALSE), collapse = "\n")
-  expect_false(grepl("padding-right: 13.3px", html0, fixed = TRUE))
+  expect_false(grepl("padding-right: 18.7px", html0, fixed = TRUE))
 })
 
 test_that("AnalyzeTable_to_png writes a PNG", {

@@ -13,6 +13,8 @@
 - ADD: AnalyzeTableTiny() gains col_gap to add extra space between columns
 - FIX: AnalyzeTableTiny() col_gap now applies only to its own table in HTML
   (the CSS rule was global and leaked into other tables of the document)
+- FIX: AnalyzeTableTiny() HTML header labels are no longer glued to the
+  next column, and are kept in a single line
 - ADD: AnalyzeTable_to_png() exports the AnalyzeTable() HTML table to a PNG
   image (via webshot2/Chromium), ready to embed in HTML, Typst or PDF
 - ADD: ahp_tree_png() saves a Visualize() tree to PNG via webshot2/Chromium
