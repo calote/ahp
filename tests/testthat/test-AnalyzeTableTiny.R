@@ -151,19 +151,21 @@ test_that("tinytable col_gap adds space between columns", {
   Calculate(m2)
   t0 <- AnalyzeTableTiny(m2)
   t1 <- AnalyzeTableTiny(m2, col_gap = 10)
-  # HTML: extra cell padding
+  # HTML: extra cell padding, applied to headers AND body cells so that
+  # both stay aligned
   h <- tempfile(fileext = ".html")
   tinytable::save_tt(t1, h, overwrite = TRUE)
   html <- paste(readLines(h, warn = FALSE), collapse = "\n")
-  expect_true(grepl("padding-right", html, fixed = TRUE))
-  # Typst: extra inset in the cell boxes
+  expect_true(grepl("table.tinytable th, table.tinytable td { padding-right: 13.3px; }",
+                    html, fixed = TRUE))
+  # Typst: column gutter, which separates whole columns (headers included)
   y <- tempfile(fileext = ".typ")
   tinytable::save_tt(t1, y, overwrite = TRUE)
   typ <- paste(readLines(y, warn = FALSE), collapse = "\n")
-  expect_true(grepl("inset: (right: 10pt)", typ, fixed = TRUE))
+  expect_true(grepl("gutter: 10pt", typ, fixed = TRUE))
   # no gap by default
   y0 <- tempfile(fileext = ".typ")
   tinytable::save_tt(t0, y0, overwrite = TRUE)
   typ0 <- paste(readLines(y0, warn = FALSE), collapse = "\n")
-  expect_false(grepl("inset: (right: 10pt)", typ0, fixed = TRUE))
+  expect_false(grepl("gutter: 10pt", typ0, fixed = TRUE))
 })

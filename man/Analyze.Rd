@@ -105,9 +105,9 @@ with \code{"fill"}.}
 
 \item{col_gap}{Extra space between columns, in points, for
 \code{AnalyzeTableTiny}. \code{NULL} (the default) adds no extra gap.
-In HTML it is applied as cell padding; in Typst as extra inset in the
-cell boxes (a table-level \code{gutter} or \code{inset} would steal
-width from the columns and squeeze long row names).}
+It is applied at column level, so that headers and body cells stay
+aligned: as cell padding in HTML and as the table's \code{gutter} in
+Typst.}
 
 \item{file}{Output PNG file name (for \code{ahp_tree_png}).}
 
