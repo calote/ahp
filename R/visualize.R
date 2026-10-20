@@ -124,3 +124,37 @@ GetTooltip <- function(x) {
   }
   return (tt)
 }
+
+#' Save an AHP decision tree as a PNG image.
+#'
+#' Takes a screenshot of the tree produced by \code{Visualize()} using
+#' \code{webshot2} and Chromium (bundled with Quarto), and returns the
+#' path to the PNG file. The image can then be embedded in Quarto
+#' documents (HTML, Typst/PDF and others) with standard Markdown syntax,
+#' e.g. \code{![Árbol de decisión](gerente-tree.png){width="90\%"}}.
+#'
+#' @param ahpTree The calculated AHP tree (output of \code{Calculate()}).
+#' @param file Output PNG file name.
+#' @param selector CSS selector passed to \code{webshot2::webshot()}.
+#' @param delay Seconds to wait before taking the screenshot.
+#' @param vwidth,vheight Viewport size in pixels passed to
+#'   \code{webshot2::webshot()}.
+#' @param ... Additional arguments passed to \code{webshot2::webshot()}.
+#' @return The path to the PNG file (invisibly).
+#' @export
+ahp_tree_png <- function(ahpTree,
+                         file = "ahp-tree.png",
+                         selector = ".grViz",
+                         delay = 3,
+                         vwidth = 1600,
+                         vheight = 900,
+                         ...) {
+  if (!requireNamespace("webshot2", quietly = TRUE)) {
+    stop("Package 'webshot2' is required for ahp_tree_png(). Please install it with install.packages('webshot2').")
+  }
+  tmp <- tempfile(fileext = ".html")
+  htmlwidgets::saveWidget(Visualize(ahpTree), tmp, selfcontained = TRUE)
+  webshot2::webshot(tmp, file = file, selector = selector, delay = delay,
+                    vwidth = vwidth, vheight = vheight, ...)
+  invisible(file)
+}

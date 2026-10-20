@@ -46,6 +46,44 @@ AnalyzeTableTiny(
 PruneByCutoff(node, decisionMaker, minWeight = 0)
 
 PruneLevels(node, decisionMaker, levelsToPrune = 0)
+
+ahp_tree_png(
+  ahpTree,
+  file = "ahp-tree.png",
+  selector = ".grViz",
+  delay = 3,
+  vwidth = 1600,
+  vheight = 900,
+  ...
+)
+}
+
+\arguments{
+\item{ahpTree}{The calculated AHP tree (output of \code{Calculate()}).}
+
+\item{file}{Output PNG file name.}
+
+\item{selector}{CSS selector passed to \code{webshot2::webshot()}.}
+
+\item{delay}{Seconds to wait before taking the screenshot.}
+
+\item{vwidth,vheight}{Viewport size in pixels passed to
+  \code{webshot2::webshot()}.}
+
+\item{...}{Additional arguments passed to \code{webshot2::webshot()}.}
+}
+
+\value{
+ahp_tree_png returns the path to the PNG file (invisibly).
+}
+
+\examples{
+\dontrun{
+ahpFile <- system.file("extdata", "car.ahp", package="ahp")
+carAhp <- Load(ahpFile)
+Calculate(carAhp)
+ahp_tree_png(carAhp, "car-tree.png")
+}
 }
 \arguments{
 \item{ahpTree}{the calculated AHP \code{data.tree}}
